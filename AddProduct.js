@@ -39,6 +39,7 @@ class AddProduct extends Component {
 	  description: '',
       vin: '',
       product_image: [],
+	  name:[],
 	  // file: null,
       product_condition: '',
       product_brand: '',
@@ -56,7 +57,7 @@ class AddProduct extends Component {
       air_bags: '',
       sunroof: '',
       engine: '',
-      transmission: '',
+      // transmission: '',
       warrenty: '',
       product_make: '',
       product_model: '',
@@ -78,17 +79,30 @@ class AddProduct extends Component {
       // payment_instruction: '',
       domestic_return: '',
       international_return: '',
+	  seo_title: '',
+	  meta_desc: '',
+	  twitter_title: '',
+	  twitter_image: '',
+	  twitter_desc: '',
+	  og_title: '',
+	  og_image: '',
+	  og_desc: '',
       // shhipping_rate: '',
       // free_shipping: '',
       // item_location: '',
 	  parentCategory: [],
 	  category: [],
 	  subCategory: [],
+	  categories:[],
 	  error: false,
 	   errorDesc: null,
 	  errors: {},
 	  visible: false,
 	  data:[],
+	  brands:[],
+	  prdattrtransmissions:[],
+	  prdattrfuels:[],
+	  
 	  
     };
 	
@@ -96,41 +110,52 @@ class AddProduct extends Component {
     this.addNotification = this.addNotification.bind(this);
 	this.categoryfetch = window.appUrl+'api/v1/categorieslist';
 	this.subCategoryfetch = window.appUrl+'api/v1/categories';
+	this.prdformdatalist = window.appUrl+'api/v1/prdformdatalist';
 	
   }
 	
-	addNotification() {
+	addNotification()
+	{
 		// alert(message);
 		
-		this.setState({ visible: true }, () => {
-		  window.setTimeout(() => {
-			this.setState({ visible: false });
-			this.props.history.push(window.appUrl+'admin/products')
-		  }, 2000);
+	    this.setState({ visible: true }, () => {
+		window.setTimeout(() => {
+		this.setState({ visible: false });
+		this.props.history.push(window.appUrl+'admin/products')
+	}, 2000);
 		});
 	}
 	
-	componentDidMount() {
+	componentDidMount()
+	{
 	
-		var access_token = localStorage.getItem('access_token');
+	    var access_token = localStorage.getItem('access_token');
 	  
-		 fetch(this.categoryfetch, { 
-		  method: 'get', 
-		  headers: new Headers({
-			'Authorization': 'bearer '+ access_token
-		  })
+		fetch(this.prdformdatalist,
+		{ 
+		    method: 'get', 
+	        headers: new Headers({
+		    'Authorization': 'bearer '+ access_token
+    })
 		})
 		// fetch(this.categoryfetch)
-			.then(response => {
-			if (!response.ok) {
-			  throw Error(response.statusText);
-			}
+			.then(response => 
+			{
+			    if (!response.ok)
+					{
+			            throw Error(response.statusText);
+			        }
 			return response.json();
-		})
-		.then(response => { 
+		  })
+		 .then(response => 
+		 { 
         
-			this.setState({ parentCategory: response.data });
-			this.setState({ pcat: response.data });
+		    this.setState({ parentCategory: response.data.categories });
+			this.setState({ pcat: response.data.categories });
+			this.setState({ brands: response.data.brands });
+			this.setState({ prdattrtransmissions: response.data.prdattrtransmissions });
+			this.setState({ prdattrfuels: response.data.prdattrfuels });
+			
 				console.log(response.data);
 			// alert(response.data);
 			
@@ -145,139 +170,156 @@ class AddProduct extends Component {
 
 	  
 	/** image uploading **/
-    uploadMultipleFiles = (e) => {
-        let files = Array.from(e.target.files);
+        uploadMultipleFiles = (e) => 
+		{
+            let files = Array.from(e.target.files);
 	  
-		files.forEach((file) => {
+		    files.forEach((file) => 
+			{
 			// alert(file);
-			let reader = new FileReader();
-			reader.onloadend = () => {
-				this.setState({    
-					 // files: [...this.state.files, file],
-					 product_image: [...this.state.product_image, reader.result],
+			   let reader = new FileReader();
+			   reader.onloadend = () => 
+			{
+			    this.setState(
+				{    
+					
+			         product_image: [...this.state.product_image, reader.result],
 					 file: [...this.state.product_image, reader.result]
 				});
 				
 			}
 			
-		reader.readAsDataURL(file);
+		      reader.readAsDataURL(file);
 		  });
         
-    }
+      }
 	
-	resetFile = id => {
-		var array = [...this.state.product_image]; // make a separate copy of the array
-	    var index = array.indexOf(id);
+	    resetFile = id => 
+		{
+		    var array = [...this.state.product_image]; // make a separate copy of the array
+	        var index = array.indexOf(id);
 	 
-	    if (index !== -1) {
-		  array.splice(index, 1);
-		  this.setState({product_image: array});
-	    }
-    }
+	        if (index !== -1)
+				{
+		            array.splice(index, 1);
+		            this.setState({product_image: array});
+	            }
+        }
 	
 	//iamge///	
 	  
-	handleDate(date) {
-		this.setState({
-			startDate:date
-		})
-	}
-	  
-	handleSubmit = (e) => {
-			
-		e.preventDefault();
-		this.setState({ isLoading: true });
-		const { title, sub_title } = this.state;
-		const credentials = {
-		  title,
-		  sub_title,
-		};
-		
-		if(this.state.description == '')
+	    handleDate(date)
 		{
-			this.setState({ errorDesc: 'Please enter the desciption.' });
-			this.setState({ isLoading: false });
-			return false;
-			// this.setState({ isLoading: false });
-			// return false;
-		}
+		    this.setState(
+			{
+			    startDate:date
+		    })
+	   }
+	  
+	     handleSubmit = (e) =>
+		 {
+			
+		     e.preventDefault();
+		     this.setState({ isLoading: true });
+		     const { title, sub_title } = this.state;
+		     const credentials =
+			 {
+		         title,
+		         sub_title,
+		     };
+		
+		 if(this.state.description == '')
+		 {
+		     this.setState({ errorDesc: 'Please enter the desciption.' });
+			 this.setState({ isLoading: false });
+			 return false;
+		 }
 		
 		
 	
-		this.validator.validateAll(credentials).then((success) => {
-		  if (success) {
+		  this.validator.validateAll(credentials).then((success) => 
+		  {
+		      if (success)
+				  {
 		
 			 // alert(this.state.warrenty);
-			let formData = new FormData();
-			// formData.append("name", this.state.name);
-			formData.append("title", this.state.title);
-			formData.append("sub_title", this.state.sub_title);
-			formData.append("product_category", this.state.product_category);
-			formData.append("description", this.state.description);
-			formData.append("vin", this.state.vin);
-			 this.state.product_image.forEach((image_file) => 
-			 { 
+			          let formData = new FormData();
+		              formData.append("name", this.state.name);
+					  formData.append("title", this.state.title);
+					  formData.append("sub_title", this.state.sub_title);
+					  formData.append("product_category", this.state.product_category);
+					  formData.append("description", this.state.description);
+					  formData.append("vin", this.state.vin);
+		              this.state.product_image.forEach((image_file) => 
+			           { 
 			
-             formData.append('file[]', image_file);
-				});
-			formData.append("product_condition", this.state.product_condition);
-			formData.append("product_brand", this.state.product_brand);
-			formData.append("product_year",Moment(this.state.startDate).format('YYYY'));
-			formData.append("fuel_type", this.state.fuel_type);
-			formData.append("cd_player", this.state.cd_player);
-			formData.append("anti_lock_brakes", this.state.anti_lock_brakes);
-			formData.append("air_conditioning", this.state.air_conditioning);
-			formData.append("power_seat", this.state.power_seat);
-			formData.append("power_locks", this.state.power_locks);
-			formData.append("cruise_control", this.state.cruise_control);
-			formData.append("suv", this.state.suv);
-			formData.append("air_bags", this.state.air_bags);
-			formData.append("sunroof", this.state.sunroof);
-			formData.append("engine", this.state.engine);
-			formData.append("transmission", this.state.transmission);
-			formData.append("warrenty", this.state.warrenty);
-			formData.append("product_make", this.state.product_make);
-			formData.append("product_model", this.state.product_model);
-			formData.append("product_color", this.state.product_color);
-			formData.append("storage_capacity", this.state.storage_capacity);
-			formData.append("camera_resolution", this.state.camera_resolution);
-			formData.append("sim_card_slot", this.state.sim_card_slot);
-			formData.append("ram_memory_card", this.state.ram_memory_card);
-			formData.append("interior", this.state.interior);
-			formData.append("exterior", this.state.exterior);
-			formData.append("video_file_link", this.state.video_file_link);
-			formData.append("youtube", this.state.youtube);
-			formData.append("sale_by", this.state.sale_by);
-			formData.append("selling_duration", this.state.selling_duration);
-			formData.append("selling_price", this.state.selling_price);
-			formData.append("selling_quantity", this.state.selling_quantity);
-			formData.append("domestic_return", this.state.domestic_return);
-			formData.append("international_return", this.state.international_return);
-	
+                           formData.append('file[]', image_file);
+				       });
+			          formData.append("product_condition", this.state.product_condition);
+			          formData.append("product_brand", this.state.product_brand);
+			          formData.append("product_year",Moment(this.state.startDate).format('YYYY'));
+			          formData.append("fuel_type", this.state.fuel_type);
+			          formData.append("cd_player", this.state.cd_player);
+			          formData.append("anti_lock_brakes", this.state.anti_lock_brakes);
+			          formData.append("air_conditioning", this.state.air_conditioning);
+			          formData.append("power_seat", this.state.power_seat);
+			          formData.append("power_locks", this.state.power_locks);
+			          formData.append("cruise_control", this.state.cruise_control);
+			          formData.append("suv", this.state.suv);
+			          formData.append("air_bags", this.state.air_bags);
+			          formData.append("sunroof", this.state.sunroof);
+			          formData.append("engine", this.state.engine);
+			          // formData.append("transmission", this.state.transmission);
+			          formData.append("warrenty", this.state.warrenty);
+			          formData.append("product_make", this.state.product_make);
+			          formData.append("product_model", this.state.product_model);
+					  formData.append("interior", this.state.interior);
+					  formData.append("exterior", this.state.exterior);
+					  formData.append("video_file_link", this.state.video_file_link);
+			          formData.append("youtube", this.state.youtube);
+					  formData.append("sale_by", this.state.sale_by);
+					  formData.append("selling_duration", this.state.selling_duration);
+					  formData.append("selling_price", this.state.selling_price);
+					  formData.append("selling_quantity", this.state.selling_quantity);
+					  formData.append("domestic_return", this.state.domestic_return);
+					  formData.append("international_return", this.state.international_return);
+					  formData.append("seo_title", this.state.seo_title);
+					  formData.append("meta_desc", this.state.meta_desc);
+					  formData.append("twitter_title", this.state.twitter_title);
+					  formData.append("twitter_image", this.state.twitter_image);
+					  formData.append("twitter_desc", this.state.twitter_desc);
+					  formData.append("og_title", this.state.og_title);
+				      formData.append("og_image", this.state.og_image);
+					  formData.append("og_desc", this.state.og_desc);
+	 
 			
 			
 			
 			
-			axios({
-			  method: "post",
-			  url: this.api,
-			  data: formData,
-			  config: { headers: { "Content-Type": "multipart/form-data" } }
-			 })
-			 .then(response => {
-				 window.scrollTo(0, 0);
-				 this.loginForm.reset();
+			        axios(
+					{
+			            method: "post",
+			            url: this.api,
+			            data: formData,
+			            config: { headers: { "Content-Type": "multipart/form-data" } }
+			        })
+			       .then(response => 
+				   {
+				        window.scrollTo(0, 0);
+				        this.loginForm.reset();
 		  
-				if (response.data.status) {
+				    if (response.data.status)
+					 {
 					
-					this.addNotification();
-				}
-			  })
-			  .catch(err => {
-				console.log("Error: ", err);
-			  });
+					     this.addNotification();
+				     }
+			      })
+			       .catch(err => 
+				   {
+				        console.log("Error: ", err);
+			       });
 			
-		  }
+		      }
 		});
 		
 		
@@ -409,17 +451,30 @@ class AddProduct extends Component {
 	}
 	
 		
-	buildOptions() {
-        var arr = [];
-					
-		arr.push(<option key="0" value="0">Select The Category</option>)
+	buildOptions(key) 
+	{
+		
+		if(key=='parentCategory')	{
+		 let catarr = [];		
+		catarr.push(<option key="0" value="0">Select The Category</option>)
 		{this.state.parentCategory.map((name, index) => (
-         arr.push(<option key={name.id} value={name.id} onClick={() => {this.handleCatChange(name.id)}}>{name.name}</option>)
+         catarr.push(<option key={name.id} value={name.id} onClick={() => {this.handleCatChange(name.id)}}>{name.name}</option>)
 		))}
-
-        return arr; 
-    
-		}
+		  return catarr;
+		}	
+		if(key=='brands')
+		{
+		let brandarr = [];
+		brandarr.push(<option key="0" value="0">Select The Brands</option>)
+		{this.state.brands.map((name, index) => (
+         brandarr.push(<option key={name.id} value={name.id}>{name.name}</option>)
+		))}
+      
+           return brandarr;
+		 }
+		
+     
+	}
 
 		
   
@@ -430,6 +485,9 @@ class AddProduct extends Component {
 	
 	const category = Array.from(this.state.category); 
 	const subcategory = Array.from(this.state.subCategory);
+	const brands = Array.from(this.state.brands);
+	const parentCategory = Array.from(this.state.parentCategory);
+	
 	
 	const productImages = Array.from(this.state.product_image); 
 	
@@ -495,6 +553,7 @@ class AddProduct extends Component {
 						<i className="fa fa-file-text-o" />
 					  </h3>
 					</div>
+					
                   {/* /.card-header */}
                  
 				 <div className="container">
@@ -504,6 +563,14 @@ class AddProduct extends Component {
 						<div className="card-login mb-3">
 						  <div className="card-body">
 							
+							<ul className="nav nav-tabs" id="custom-content-below-tab" role="tablist">
+						<li className="nav-item">
+						  <a className="nav-link active" id="custom-content-below-home-tab" data-toggle="pill" href="#custom-content-below-home" role="tab" aria-controls="custom-content-below-home" aria-selected="true">Products</a>
+						</li>
+					<li className="nav-item">
+						  <a className="nav-link" id="custom-content-below-profile-tab" data-toggle="pill" href="#custom-content-below-profile" role="tab" aria-controls="custom-content-below-profile" aria-selected="false">Seo</a>
+						</li>
+					  </ul>
 							<form
 							
 							  className="form-horizontal "
@@ -513,8 +580,9 @@ class AddProduct extends Component {
 								this.loginForm = el;
 							  }}
 							>       
+							 <div className="tab-content" id="custom-content-below-tabContent">
 								
-								
+								<div className="tab-pane fade active show" id="custom-content-below-home" role="tabpanel" aria-labelledby="custom-content-below-home-tab">
 								
 								
 								<div className="row">
@@ -575,15 +643,17 @@ class AddProduct extends Component {
 								>
 								<div className="form-group d-flex">
 								
-								  <div className="col-md-4 col-sm-6">
+								  <div className="col-md-4 col-sm-4">
 									<label htmlFor="product_category">Category</label>                 
-																																	   																							   
+	
 									  <select name="product_category" size={7}
+									 
 										onChange={this.handleChange}
 										onBlur={this.handleBlur}
 										className='form-control'
+										
 									  >
-										{this.buildOptions()}
+										{this.buildOptions('parentCategory')}
 										
 									  </select>
 								   </div>
@@ -593,6 +663,7 @@ class AddProduct extends Component {
 									<label htmlFor="product_category">&nbsp;</label>                 
 																																	   																							   
 									  <select name="product_category" size={7}
+									  
 										onChange={this.handleChange}
 										onBlur={this.handleBlur}
 										className='form-control'
@@ -627,12 +698,18 @@ class AddProduct extends Component {
 								 
 								</fieldset >
 								
-								  <label htmlFor=''>Description: &nbsp;
+								 
+								 	   	<br/>
+								 
+								  <label htmlFor='description'>Description: 
 								                      
 
 
 									{this.state.errorDesc && <small className="text-red">&nbsp;{this.state.errorDesc}</small>}
 								  </label>
+								   &nbsp;
+								   &nbsp;
+								   
 								 
 								  <CKEditor 
 								  
@@ -648,6 +725,7 @@ class AddProduct extends Component {
 									}}
 									
 								   />
+								   
 								   <br/>
 								
 									<div className="row">
@@ -765,37 +843,54 @@ class AddProduct extends Component {
 										
 									</div>
 									</fieldset>
+									<br/>
+									
+									
 								
 								{/*  product image upload end*/}
+								<fieldset 
+									style={{border: '1px solid #c0c0c0', margin: '0 2px'}}
+								>
+								
 									<div className="row">
-									<div className="col-sm-6">
+									<div className="col-sm-4">
 									  <div className="form-group">
-										  <label htmlFor="product_condition">Product  Condition</label>
-										  <input
-											id="product_condition"
-											type="text"
-											className={classNames('form-control', {
-											  'is-invalid': 'product_condition' in errors,
-											})}
-											name="product_condition"
-											placeholder="Enter product Condition"
-											onChange={this.handleChange}
-											onBlur={this.handleBlur}
-										  />
-										  
-										  {'product_condition' in errors && (
-											<div className="invalid-feedback">
-											  {errors.product_condition}
-											</div>
-										  )}
+										  <label htmlFor="product_condition">Choose Product  Condition </label><br/>
+										  <select name="product_condition" id="product_condition">
+										
+								    <option>Select</option>
+								    <option value="Diesel">OLd</option>
+								    <option value="Petrol">New</option>
+								    onChange={this.handleChange}
+										onBlur={this.handleBlur}
+								 
+								</select>
 										</div>
 									</div>
 									
 							   </div>
+							   </fieldset>
+							   	<br/>
 							   
+							   
+							   
+							   <fieldset 
+									style={{border: '1px solid #c0c0c0', margin: '0 2px'}}
+								>
+								<div className="form-group ">
 								
-							
-								
+								  <div className="col-md-4 col-sm-4">
+									<label htmlFor="product_brand">Brand</label> <br/>                
+																																	   																							   
+									  <select name="product_brand" 
+									  >
+										{this.buildOptions('brands')}
+									
+									  </select>
+								   </div>
+								   </div>
+								   </fieldset>
+							   {/*
 								<div className="form-group">
 								  <label htmlFor="product_brand">Product Brand</label>
 								  <input
@@ -805,7 +900,7 @@ class AddProduct extends Component {
 									  'is-invalid': 'product_brand' in errors,
 									})}
 									name="product_brand"
-									placeholder="Enter product Brand"
+									placeholder="Enter Product Brand"
 									onChange={this.handleChange}
 									onBlur={this.handleBlur}
 								  />
@@ -816,9 +911,10 @@ class AddProduct extends Component {
 									</div>
 								  )}
 								</div>
-									
+									  */}
 								<div className="form-group">
-								  <label htmlFor="product_year">Product Year</label>
+								  <label htmlFor="product_year">Product Year</label><br/>
+								  
 								 <DatePicker
 								    className="form-control"
 									selected={this.state.startDate}
@@ -831,28 +927,42 @@ class AddProduct extends Component {
 								 
 								</div>
 
-								
-								<div className="form-group">
-								  <label htmlFor="fuel_type">Fuel Type</label>
-								  <input
-									id="fuel_type"
-									type="text"
-									className={classNames('form-control', {
-									  'is-invalid': 'fuel_type' in errors,
-									})}
-									name="fuel_type"
-									placeholder="Enter Fuel Type"
-									onChange={this.handleChange}
-									onBlur={this.handleBlur}
-								  />
+								<fieldset 
+								style={{border: '1px solid #c0c0c0', margin: '0 2px', padding: '0.35em 0.625em 0.75em', display: 'block', marginInlineStart: '2px', marginInlineEnd: '2px', paddingBlockStart: '0.35em', paddingInlineStart: '0.75em', paddingInlineEnd: '23.75em', paddingBlockEnd: '0.625em', minInlineSize: 'min-content', marginBottom: '1em'}}
+									>	
+											
+														
+									
+									
+									
+									
+									
+									
+									
+									<div className="row">
+								<div className="col-sm-4">
+								  <div className="form-group">
 								  
-								  {'fuel_type' in errors && (
-									<div className="invalid-feedback">
-									  {errors.fuel_type}
-									</div>
-								  )}
-								</div>
+								  <label htmlFor="product_attribute_fuel_id"> Choose FUEL Type</label>
 								
+								<select name="product_attribute_fuel_id" id="product_attribute_fuel_id">
+								<span>Select the Fuel</span>
+								 <option>Select</option>
+								<option value="Diesel">Diesel</option>
+								  <option value="Petrol">Petrol</option>
+								  <option value="Gasoline">Gasoline</option>
+								  <option value="Hybrid">Hybrid</option>
+								  <option value="MPG">MPG</option>
+								  <option value="LPG">LPG</option>
+								 onChange={this.handleChange}
+										onBlur={this.handleBlur}
+								</select>
+							  </div>
+								</div>
+								</div>
+							
+								</fieldset>
+														
 								
 							
 							
@@ -936,6 +1046,31 @@ class AddProduct extends Component {
 							</fieldset>
 									
 								
+								<fieldset 
+								style={{border: '1px solid #c0c0c0', margin: '0 2px', padding: '0.35em 0.625em 0.75em', display: 'block', marginInlineStart: '2px', marginInlineEnd: '2px', paddingBlockStart: '0.35em', paddingInlineStart: '0.75em', paddingInlineEnd: '23.75em', paddingBlockEnd: '0.625em', minInlineSize: 'min-content', marginBottom: '1em'}}
+									>	
+								<div className="row">
+								<div className="col-sm-4">
+								  <div className="form-group">
+								  
+								  <label htmlFor="product_attribute_transmission_id	"> Choose Transmission</label>
+								
+								  
+								
+								<select name="product_attribute_transmission_id	" id="product_attribute_transmission_id	">
+								 <option>Select</option>
+								<option value="Automatic">Automatic</option>
+								  <option value="Manual">Manual</option>
+								  <option value="automat">automat</option>
+								 onChange={this.handleChange}
+										onBlur={this.handleBlur}
+								</select>
+							  </div>
+								</div>
+								</div>
+								</fieldset>
+								
+								
 							 	<fieldset 
 								style={{border: '1px solid #c0c0c0', margin: '0 2px', padding: '0.35em 0.625em 0.75em', display: 'block', marginInlineStart: '2px', marginInlineEnd: '2px', paddingBlockStart: '0.35em', paddingInlineStart: '0.75em', paddingInlineEnd: '23.75em', paddingBlockEnd: '0.625em', minInlineSize: 'min-content', marginBottom: '1em'}}
 									>	
@@ -952,7 +1087,7 @@ class AddProduct extends Component {
 									  'is-invalid': 'engine' in errors,
 									})}
 									name="engine"
-									placeholder="Enter data"
+									placeholder="Enter Data"
 									onChange={this.handleChange}
 									onBlur={this.handleBlur}
 								  />
@@ -964,28 +1099,9 @@ class AddProduct extends Component {
 									 )}
 									 </div>
 									 </div>
-								  	<div className="col-sm-4">
-								  <div className="form-group">
-								  <label htmlFor="transmission">Transmission</label>
-								  <input
-									id="transmission"
-									type="text"
-									className={classNames('form-control', {
-									  'is-invalid': 'transmission' in errors,
-									})}
-									name="transmission"
-									placeholder="Enter Transmission"
-									onChange={this.handleChange}
-									onBlur={this.handleBlur}
-								  />
-								  
-								  {'transmission' in errors && (
-									<div className="invalid-feedback">
-									  {errors.transmission}
-									</div>
-								  )}
-								</div>
-								</div>
+									 
+								  	
+								
 								   <div className="col-sm-4">
 								   <div className="form-group">
 								  <label htmlFor="warrenty">Warrenty</label>
@@ -1020,7 +1136,7 @@ class AddProduct extends Component {
 									  'is-invalid': 'product_make' in errors,
 									})}
 									name="product_make"
-									placeholder="Enter product make"
+									placeholder="Enter Product Make"
 									onChange={this.handleChange}
 									onBlur={this.handleBlur}
 								  />
@@ -1438,15 +1554,228 @@ class AddProduct extends Component {
 									 <span className="slider round" />
 									</label>
 							     </div>
+							     </div>
 								
 									
 								
-
+								{/*  seo part*/}
 								
+						<div className="tab-pane fade" id="custom-content-below-profile" role="tabpanel" aria-labelledby="custom-content-below-profile-tab">
+						  
+						 <div className='card-body pad'> 
+								  
+								  <div className="form-group">
+									<label htmlFor='seo_title'>Title:</label>
+									<div className="input-group">
+									  <div className="input-group-prepend">
+										<span className="input-group-text"><i className="fa fa-edit" /></span>
+									  </div>
+									  <input
+										id="seo_title"
+										type="text"
+										name="seo_title"
+										className={classNames('form-control', {
+										  'is-invalid': 'seo_title' in errors,
+										})}
+										placeholder="Title"
+										onChange={this.handleChange}
+										onBlur={this.handleBlur}
+										value={this.state.seo_title}
+									  />
+									  {'seo_title' in errors && (
+										  <div className="invalid-feedback">{errors.seo_title}</div>
+									  )}
+									</div>
+								  </div>
+								  
+								  
+								  
+								   <div className="form-group">
+									<label htmlFor='meta_desc'>Meta Description:</label>
+									<div className="input-group">
+									  <div className="input-group-prepend">
+										<span className="input-group-text"><i className="fa fa-edit" /></span>
+									  </div>
+									  <input
+										id="meta_desc"
+										type="text"
+										name="meta_desc"
+										className={classNames('form-control', {
+										  'is-invalid': 'meta_desc' in errors,
+										})}
+										placeholder="Meta Description"
+										onChange={this.handleChange}
+										onBlur={this.handleBlur}
+										value={this.state.meta_desc}
+									  />
+									  
+									  {'meta_desc' in errors && (
+										  <div className="invalid-feedback">{errors.meta_desc}</div>
+									  )}
+										
+									</div>
+								   </div>
+								   
+								   <div className="form-group">
+									<label htmlFor='twitter_title'>Twitter:</label>
+									<div className="input-group">
+									  <div className="input-group-prepend">
+										<span className="input-group-text"><i className="fa fa-edit" /></span>
+									  </div>
+									  <input
+										id="twitter_title"
+										type="text"
+										name="twitter_title"
+										className={classNames('form-control', {
+										  'is-invalid': 'twitter_title' in errors,
+										})}
+										placeholder="Twitter Title"
+										onChange={this.handleChange}
+										onBlur={this.handleBlur}
+										value={this.state.twitter_title}
+									  />
+									  
+									  {'twitter_title' in errors && (
+										  <div className="invalid-feedback">{errors.twitter_title}</div>
+									  )}
+										
+									</div>
+								   </div>
+								   
+								   
+								   <div className="form-group">
+									<div className="input-group">
+									  <div className="input-group-prepend">
+										<span className="input-group-text"><i className="fa fa-edit" /></span>
+									  </div>
+									  <input
+										id="twitter_image"
+										type="text"
+										name="twitter_image"
+										className={classNames('form-control', {
+										  'is-invalid': 'twitter_image' in errors,
+										})}
+										placeholder="Twitter Image"
+										onChange={this.handleChange}
+										onBlur={this.handleBlur}
+										value={this.state.twitter_image}
+									  />
+									  
+									  {'twitter_image' in errors && (
+										  <div className="invalid-feedback">{errors.twitter_image}</div>
+									  )}
+										
+									</div>
+								   </div>
+								   
+								   <div className="form-group">
+									<div className="input-group">
+									  <div className="input-group-prepend">
+										<span className="input-group-text"><i className="fa fa-edit" /></span>
+									  </div>
+									  <input
+										id="twitter_desc"
+										type="text"
+										name="twitter_desc"
+										className={classNames('form-control', {
+										  'is-invalid': 'twitter_desc' in errors,
+										})}
+										placeholder="Twitter Description"
+										onChange={this.handleChange}
+										onBlur={this.handleBlur}
+										value={this.state.twitter_desc}
+									  />
+									  
+									  {'twitter_desc' in errors && (
+										  <div className="invalid-feedback">{errors.twitter_desc}</div>
+									  )}
+										
+									</div>
+								   </div>
+								   
+								   <div className="form-group">
+									<label htmlFor='og_title'>Facebook:</label>
+									<div className="input-group">
+									  <div className="input-group-prepend">
+										<span className="input-group-text"><i className="fa fa-edit" /></span>
+									  </div>
+									  <input
+										id="og_title"
+										type="text"
+										name="og_title"
+										className={classNames('form-control', {
+										  'is-invalid': 'og_title' in errors,
+										})}
+										placeholder="Facebook Title"
+										onChange={this.handleChange}
+										onBlur={this.handleBlur}
+										value={this.state.og_title}
+									  />
+									  
+									  {'og_title' in errors && (
+										  <div className="invalid-feedback">{errors.og_title}</div>
+									  )}
+										
+									</div>
+								   </div>
+								   
+								   <div className="form-group">
+									<div className="input-group">
+									  <div className="input-group-prepend">
+										<span className="input-group-text"><i className="fa fa-edit" /></span>
+									  </div>
+									  <input
+										id="og_desc"
+										type="text"
+										name="og_desc"
+										className={classNames('form-control', {
+										  'is-invalid': 'og_desc' in errors,
+										})}
+										placeholder="Facebook Description"
+										onChange={this.handleChange}
+										onBlur={this.handleBlur}
+										value={this.state.og_desc}
+									  />
+									  
+									  {'og_desc' in errors && (
+										  <div className="invalid-feedback">{errors.og_desc}</div>
+									  )}
+										
+									</div>
+								   </div>
+								   
+								   
+								   <div className="form-group">
+									<div className="form-group">
+									
+									  <input
+										id="og_image"
+										type="file"
+										name="og_image"
+										className={classNames('form-control', {
+										  'is-invalid': 'og' in errors,
+										})}
+										placeholder="Facebook Image"
+										onChange={this.handleChange}
+										onBlur={this.handleBlur}
+										value={this.state.og_image}
+									  />
+									  
+									  {'og_image' in errors && (
+										  <div className="invalid-feedback">{errors.og_image}</div>
+									  )}
+										
+									</div>
+								   </div>
+								   
+								   
 								
-								
-								<div className="form-group text-center">
-								  <div className="col-md-3 col-lg-3 col-sm-6">
+						</div>
+					  </div>
+					 
+					  
+								<div className="form-group text-center">                                    
+								  <div className="input-group">
 									<button
 									  type="submit"
 									  className='btn btn-primary'
@@ -1457,10 +1786,15 @@ class AddProduct extends Component {
 									</button>
 								  </div>
 								  </div>
-						
+								  </div>
+						<div className="tab-custom-content">
+						<p className="lead mb-0">Create Your Products here</p>
+					  </div>
+								
 							  </form>
 						  
-						  </div>
+					
+						</div>
 						</div>
 
 						
