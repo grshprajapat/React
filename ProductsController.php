@@ -5,7 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Product;
+use App\Brand;
+use App\Category;
 use App\ProductImage;
+use App\Seo;
+use App\ProductAttributesTransmission;
+use App\ProductAttributesFuel;
 
 
 class ProductsController extends Controller
@@ -22,9 +27,36 @@ class ProductsController extends Controller
     }
 	
 	
+	public function prdformdatalist()
+	{
+		
+	    $categories            = Category::where('parent_id','0')->orderBy('id', 'DESC')->get();
+		
+		
+		$brands                = Brand::orderBy('id', 'DESC')->get();
+		$prdattrtransmissions  = ProductAttributesTransmission::orderBy('id', 'DESC')->get();
+		$prdattrfuels  = ProductAttributesFuel::orderBy('id', 'DESC')->get();
+		
+		
+		$dataarray=array();
+		
+		$dataarray['categories']=$categories;
+		$dataarray['brands']=$brands;
+		$dataarray['prdattrtransmissions']=$prdattrtransmissions;
+		$dataarray['prdattrfuels']=$prdattrfuels;
+		
+		
+		
+        return response()->json([
+                'status' => 201,
+                'data' => $dataarray,
+            ], 201);
+		
+	}
+	
 	public function store(Request $request)
 	{			
-		
+		// $fuel = ProductAttributeFuel::where('id', $request->id)->belongsTo();
 		$array = array("cd_player", "anti_lock_brakes", "air_conditioning", "power_seat", "power_locks", "cruise_control", "suv", "air_bags", "sunroof", "domestic_return", "international_return");
 
 		$entry = new Product;
@@ -37,7 +69,8 @@ class ProductsController extends Controller
 		$entry->product_condition = $request->product_condition;
 		$entry->product_brand = $request->product_brand;
 		$entry->product_year = $request->product_year;
-		$entry->fuel_type = $request->fuel_type;
+		// $entry->fuel_type = $request->fuel_type;
+		// $entry->product_attribute_transmission_id = $trans->product_attribute_transmission_id;
 		$entry->cd_player = $request->cd_player;
 		$entry->anti_lock_brakes = $request->anti_lock_brakes;
 		$entry->air_conditioning = $request->air_conditioning;
@@ -48,7 +81,7 @@ class ProductsController extends Controller
 		$entry->air_bags = $request->air_bags;
 		$entry->sunroof= $request->sunroof;
 		$entry->engine= $request->engine;
-		$entry->transmission = $request->transmission;
+		// $entry->transmission = $request->transmission;
 		$entry->warrenty = $request->warrenty;
 		$entry->product_make = $request->product_make;
 		$entry->product_model = $request->product_model;
@@ -79,6 +112,34 @@ class ProductsController extends Controller
 		 }	
 		
 		$entry->save();
+		$seo = new Seo;
+		
+		$seo->product_id = $entry->id;
+		$seo->title = $request->seo_title;
+		$seo->description = $request->meta_desc;
+		$seo->twitter_title = $request->twitter_title;
+		$seo->twitter_image = $request->twitter_image;
+		$seo->twitter_description = $request->twitter_desc;
+		$seo->open_graph_title = $request->open_graph_title;
+		$seo->open_graph_description = $request->open_graph_desc;
+		$seo->open_graph_image = $request->open_graph_image;
+		$seo->save();
+		
+		
+		/* storinng fuel attribute */
+		$prdattrfuels = new ProductAttributesFuel;
+		$prdattrfuels->id = $entry->product_attribute_fuel_id;
+		$prdattrfuels->name = $request->name;
+		$prdattrfuels->save();
+		
+		/* storing transmission attribute  */
+		$prdattrtransmissions = new ProductAttributesTransmission;
+		$prdattrtransmissions->id = $entry->product_attribute_transmission_id;
+		$prdattrtransmissions->name = $request->name;
+		
+		$prdattrtransmissions->save();
+		
+		
 		
 		
 		/**save product images if having*/
@@ -143,8 +204,12 @@ class ProductsController extends Controller
              }
         
 		 }
+					
+						
 		
-		
+								
+					
+					
 		return response()->json([
                 'status' => 201,
                 'message' => 'Resource added WONDEFULL.'
@@ -204,7 +269,7 @@ class ProductsController extends Controller
 					 'product_condition' => $request->product_condition,
 					'product_brand' => $request->product_brand,
 					'product_year' => $request->product_year,
-					'fuel_type' => $request->fuel_type,
+					// 'fuel_type' => $request->fuel_type,
 					'cd_player' => $request->cd_player,
 					'anti_lock_brakes' => $request->anti_lock_brakes,
 					'air_conditioning' => $request->air_conditioning,
@@ -215,7 +280,7 @@ class ProductsController extends Controller
 					'air_bags' => $request->air_bags,
 					'sunroof' => $request->sunroof,
 				   'engine' => $request->engine,
-					'transmission' => $request->transmission,
+					// 'transmission' => $request->transmission,
 				   'warrenty' => $request->warrenty,
 				  'product_make' => $request->product_make,
 				  'product_model' => $request->product_model,
@@ -240,6 +305,55 @@ class ProductsController extends Controller
 				->where('id', $request->id)
 				->update($updateDetails);
 				
+				$seo = Seo::where('product_id', $request->id)->firstOrFail();
+		
+		if($seo)
+		{
+			$updateDetails = [
+				'title' => $request->seo_title,
+				'description' => $request->meta_desc,
+				'twitter_title' => $request->twitter_title,
+				'twitter_image' => $request->twitter_image,
+				'twitter_description' => $request->twitter_desc,
+				'open_graph_title' => $request->open_graph_title,
+				'open_graph_description' => $request->open_graph_desc,
+				'open_graph_image' => $request->open_graph_image,
+			];
+	
+			\DB::table('seo')
+				->where('product_id', $request->id)
+				->update($updateDetails);
+		}
+		
+				/* storing fuel  */
+				
+				
+					$prdattrfuels = ProductAttributesFuel::where('id', $request->product_attribute_fuel_id)->firstOrFail();
+					if($prdattrfuels)
+		{
+			$updateDetails = [
+				'name' => $request->name,
+			
+			];
+        
+			\DB::table('product_attributes_fuels')
+				->where('id', $request->id)
+				->update($updateDetails);
+		}
+				   /*storing transmission  */
+				$prdattrtransmissions = ProductAttributesTransmission::where('id', $request->product_attribute_fuel_id)->firstOrFail();
+					if($prdattrtransmissions)
+		{
+			$updateDetails = [
+				'name' => $request->name,
+			
+			];
+
+			\DB::table('product_attributes_transmissions')
+				->where('id', $request->id)
+				->update($updateDetails);
+		}
+		
 			return response()->json([
                 'status' => 201,
                 'message' => 'Resource Updated'
