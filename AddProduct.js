@@ -102,6 +102,10 @@ class AddProduct extends Component {
 	  brands:[],
 	  prdattrtransmissions:[],
 	  prdattrfuels:[],
+	  pdctelectronic:[],
+	  prdattrelectronic:[],
+	  
+	  
 	  
 	  
     };
@@ -111,6 +115,7 @@ class AddProduct extends Component {
 	this.categoryfetch = window.appUrl+'api/v1/categorieslist';
 	this.subCategoryfetch = window.appUrl+'api/v1/categories';
 	this.prdformdatalist = window.appUrl+'api/v1/prdformdatalist';
+	
 	
   }
 	
@@ -155,6 +160,9 @@ class AddProduct extends Component {
 			this.setState({ brands: response.data.brands });
 			this.setState({ prdattrtransmissions: response.data.prdattrtransmissions });
 			this.setState({ prdattrfuels: response.data.prdattrfuels });
+			this.setState({ pdctelectronic: response.data.pdctelectronic });
+			this.setState({ prdattrelectronic: response.data.prdattrelectronic });
+			
 			
 				console.log(response.data);
 			// alert(response.data);
@@ -450,6 +458,8 @@ class AddProduct extends Component {
 		
 	}
 	
+
+	
 		
 	buildOptions(key) 
 	{
@@ -487,6 +497,8 @@ class AddProduct extends Component {
 	const subcategory = Array.from(this.state.subCategory);
 	const brands = Array.from(this.state.brands);
 	const parentCategory = Array.from(this.state.parentCategory);
+	const pdctelectronic = Array.from(this.state.pdctelectronic);
+	const prdattrelectronic = Array.from(this.state.prdattrelectronic);
 	
 	
 	const productImages = Array.from(this.state.product_image); 
@@ -971,75 +983,21 @@ class AddProduct extends Component {
 							>
 							  <legend>Tick The Require One </legend>
 							  
+							  
 								<div className="form-group">
 								 
 							
-						
-								  <label className="checkbox-inline">
-									<input type="checkbox" defaultChecked={this.state.cd_player} name='cd_player'  onChange={this.handleChecked} />
-									  &nbsp; Cd Player
-									</label>
-							
+								    {this.state.prdattrelectronic.map((name, index) => (
+								    <label className="checkbox-inline">
+                                    <input type="checkbox" name='product_electronic_id[]' value='{name.id}' />
 									
-									&nbsp;
-									&nbsp;
-								
-									<label className="checkbox-inline">
-									  <input type="checkbox" name='anti_lock_brakes' defaultChecked={this.state.anti_lock_brakes} onChange={this.handleChecked}
-									 />
-									   &nbsp; Anti-locks brakes
-									</label>
-								
-									&nbsp;
-									&nbsp;
-							
-									<label className="checkbox-inline">
-									  <input type="checkbox" name='air_conditioning' defaultChecked={this.state.air_conditioning}  onChange={this.handleChecked}
-									/>
-									  &nbsp; Air conditioning
+									{name.name}
 									</label>
 									
-									&nbsp;
-									&nbsp;
-									<label className="checkbox-inline">
-									  <input type="checkbox" name='power_seat' defaultChecked={this.state.power_seat}  onChange={this.handleChecked}
-									/>
-									   &nbsp; Power Seat
-									</label>
-									&nbsp;
-									&nbsp;
-									<label className="checkbox-inline">
-									  <input type="checkbox" name='power_locks' defaultChecked={this.state.power_locks}  onChange={this.handleChecked}
-									 />
-									 &nbsp;	Power Locks
-									</label>
-									&nbsp;
-									<label className="checkbox-inline">
-									  <input type="checkbox" name='cruise_control' defaultChecked={this.state.cruise_control}  onChange={this.handleChecked}
-									/>
-										 &nbsp; Cruise Control
-									</label>
-									&nbsp;
-									&nbsp;
-									<label className="checkbox-inline">
-									  <input type="checkbox" name='suv' defaultChecked={this.state.suv}  onChange={this.handleChecked}
-									 />
-									 &nbsp;	Suv
-									</label>
-									&nbsp;
-									&nbsp;
-									<label className="checkbox-inline">
-									  <input type="checkbox" name='air_bags' defaultChecked={this.state.air_bags} onChange={this.handleChecked}
-									 />
-										 &nbsp; Air Bags
-									</label>
-									&nbsp;
-									&nbsp;
-									<label className="checkbox-inline">
-									  <input type="checkbox" name='sunroof' defaultChecked={this.state.sunroof}  onChange={this.handleChecked}
-									/>
-										 &nbsp; Sunroof
-									</label>
+										
+									 
+									))}
+									
 									
 								  </div>
 								  

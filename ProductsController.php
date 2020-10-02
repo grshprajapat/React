@@ -7,10 +7,12 @@ use Illuminate\Http\Request;
 use App\Product;
 use App\Brand;
 use App\Category;
+use App\ProductElectronic;
 use App\ProductImage;
 use App\Seo;
-use App\ProductAttributesTransmission;
-use App\ProductAttributesFuel;
+use App\ProductAttributeTransmission;
+use App\ProductAttributeFuel;
+use App\ProductAttributeElectronic;
 
 
 class ProductsController extends Controller
@@ -33,10 +35,11 @@ class ProductsController extends Controller
 	    $categories            = Category::where('parent_id','0')->orderBy('id', 'DESC')->get();
 		
 		
-		$brands                = Brand::orderBy('id', 'DESC')->get();
-		$prdattrtransmissions  = ProductAttributesTransmission::orderBy('id', 'DESC')->get();
-		$prdattrfuels  = ProductAttributesFuel::orderBy('id', 'DESC')->get();
-		
+		$brands                  = Brand::orderBy('id', 'DESC')->get();
+		$prdattrtransmissions    = ProductAttributeTransmission::orderBy('id', 'DESC')->get();
+		$prdattrfuels            = ProductAttributeFuel::orderBy('id', 'DESC')->get();
+		$prdattrelectronic        = ProductAttributeElectronic::orderBy('id', 'DESC')->get();
+		$pdctelectronic          = ProductElectronic::orderBy('id', 'DESC')->get();
 		
 		$dataarray=array();
 		
@@ -44,6 +47,8 @@ class ProductsController extends Controller
 		$dataarray['brands']=$brands;
 		$dataarray['prdattrtransmissions']=$prdattrtransmissions;
 		$dataarray['prdattrfuels']=$prdattrfuels;
+		$dataarray['pdctelectronic']=$pdctelectronic;
+		$dataarray['prdattrelectronic']=$prdattrelectronic;
 		
 		
 		
@@ -53,6 +58,13 @@ class ProductsController extends Controller
             ], 201);
 		
 	}
+							
+	
+	
+	
+	
+	
+	
 	
 	public function store(Request $request)
 	{			
@@ -138,6 +150,13 @@ class ProductsController extends Controller
 		$prdattrtransmissions->name = $request->name;
 		
 		$prdattrtransmissions->save();
+		
+		/* storing checkbox of product electronic attribute  */
+		$pdctelectronic = new ProductElectronic;
+		$pdctelectronic->id = $entry->product_electronic_id;
+		$pdctelectronic->name = $request->name;
+		
+		$pdctelectronic->save();
 		
 		
 		
@@ -350,6 +369,19 @@ class ProductsController extends Controller
 			];
 
 			\DB::table('product_attributes_transmissions')
+				->where('id', $request->id)
+				->update($updateDetails);
+		}
+						   /*updating product electronic   */
+				$pdctelectronic = ProductElectronic::where('id', $request->product_electronic_id)->firstOrFail();
+					if($pdctelectronic)
+		{
+			$updateDetails = [
+				'name' => $request->name,
+			
+			];
+
+			\DB::table('product_electronics')
 				->where('id', $request->id)
 				->update($updateDetails);
 		}
