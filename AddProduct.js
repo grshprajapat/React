@@ -102,6 +102,8 @@ class AddProduct extends Component {
 	  brands:[],
 	  prdattrtransmissions:[],
 	  prdattrfuels:[],
+	  pdctfuel:[],
+	  pdcttransmission:[],
 	  pdctelectronic:[],
 	  prdattrelectronic:[],
 	  
@@ -160,6 +162,8 @@ class AddProduct extends Component {
 			this.setState({ brands: response.data.brands });
 			this.setState({ prdattrtransmissions: response.data.prdattrtransmissions });
 			this.setState({ prdattrfuels: response.data.prdattrfuels });
+			this.setState({ pdctfuel: response.data.pdctfuel });
+			this.setState({ pdcttransmission: response.data.pdcttransmission });
 			this.setState({ pdctelectronic: response.data.pdctelectronic });
 			this.setState({ prdattrelectronic: response.data.prdattrelectronic });
 			
@@ -476,11 +480,35 @@ class AddProduct extends Component {
 		{
 		let brandarr = [];
 		brandarr.push(<option key="0" value="0">Select The Brands</option>)
-		{this.state.brands.map((name, index) => (
-         brandarr.push(<option key={name.id} value={name.id}>{name.name}</option>)
+		{
+			this.state.brands.map((name, index) => (
+			brandarr.push(<option key={name.id} value={name.id}>{name.name}</option>)
 		))}
       
            return brandarr;
+		 }
+		 
+		 if(key=='prdattrfuels')
+		 {
+		     let profuel = [];
+		      profuel.push(<option key="0" value="0">Select The Fuels</option>)
+		     {
+				 this.state.prdattrfuels.map((name, index) => (
+                  profuel.push(<option key={name.id} value={name.id}>{name.name}</option>)
+		 ))}
+      
+           return profuel;
+		 }
+	if(key=='prdattrtransmissions')
+		 {
+		     let protrns = [];
+		      protrns.push(<option key="0" value="0">Select The Transmission</option>)
+		     {
+				 this.state.prdattrtransmissions.map((name, index) => (
+                  protrns.push(<option key={name.id} value={name.id}>{name.name}</option>)
+		 ))}
+      
+           return protrns;
 		 }
 		
      
@@ -499,6 +527,11 @@ class AddProduct extends Component {
 	const parentCategory = Array.from(this.state.parentCategory);
 	const pdctelectronic = Array.from(this.state.pdctelectronic);
 	const prdattrelectronic = Array.from(this.state.prdattrelectronic);
+	const prdattrtransmissions = Array.from(this.state.prdattrtransmissions);
+	const pdcttransmission = Array.from(this.state.pdcttransmission); 
+	const prdattrfuels = Array.from(this.state.prdattrfuels);
+	const pdctfuel = Array.from(this.state.pdctfuel);
+	
 	
 	
 	const productImages = Array.from(this.state.product_image); 
@@ -925,7 +958,7 @@ class AddProduct extends Component {
 								</div>
 									  */}
 								<div className="form-group">
-								  <label htmlFor="product_year">Product Year</label><br/>
+								  <label htmlFor="product_year">Product Yearr</label><br/>
 								  
 								 <DatePicker
 								    className="form-control"
@@ -939,39 +972,36 @@ class AddProduct extends Component {
 								 
 								</div>
 
-								<fieldset 
-								style={{border: '1px solid #c0c0c0', margin: '0 2px', padding: '0.35em 0.625em 0.75em', display: 'block', marginInlineStart: '2px', marginInlineEnd: '2px', paddingBlockStart: '0.35em', paddingInlineStart: '0.75em', paddingInlineEnd: '23.75em', paddingBlockEnd: '0.625em', minInlineSize: 'min-content', marginBottom: '1em'}}
-									>	
+								
 											
 														
 									
 									
 									
+									{/*  Fuel type */}
+									
+									<fieldset 
+								style={{border: '1px solid #c0c0c0', margin: '0 2px', padding: '0.35em 0.625em 0.75em', display: 'block', marginInlineStart: '2px', marginInlineEnd: '2px', paddingBlockStart: '0.35em', paddingInlineStart: '0.75em', paddingInlineEnd: '23.75em', paddingBlockEnd: '0.625em', minInlineSize: 'min-content', marginBottom: '1em'}}
+									>	
 									
 									
-									
-									
-									<div className="row">
-								<div className="col-sm-4">
-								  <div className="form-group">
 								  
-								  <label htmlFor="product_attribute_fuel_id"> Choose FUEL Type</label>
+								   <legend>Fuel Type </legend>
+							  
+							  
+								<div className="form-group">
+								  
 								
-								<select name="product_attribute_fuel_id" id="product_attribute_fuel_id">
-								<span>Select the Fuel</span>
-								 <option>Select</option>
-								<option value="Diesel">Diesel</option>
-								  <option value="Petrol">Petrol</option>
-								  <option value="Gasoline">Gasoline</option>
-								  <option value="Hybrid">Hybrid</option>
-								  <option value="MPG">MPG</option>
-								  <option value="LPG">LPG</option>
-								 onChange={this.handleChange}
-										onBlur={this.handleBlur}
-								</select>
-							  </div>
-								</div>
-								</div>
+									
+									 <select name="product_attribute_fuel_id[]" 
+									  >
+										{this.buildOptions('prdattrfuels')}
+									
+									  </select>
+								 
+								
+								 </div>
+								
 							
 								</fieldset>
 														
@@ -1007,25 +1037,25 @@ class AddProduct extends Component {
 								<fieldset 
 								style={{border: '1px solid #c0c0c0', margin: '0 2px', padding: '0.35em 0.625em 0.75em', display: 'block', marginInlineStart: '2px', marginInlineEnd: '2px', paddingBlockStart: '0.35em', paddingInlineStart: '0.75em', paddingInlineEnd: '23.75em', paddingBlockEnd: '0.625em', minInlineSize: 'min-content', marginBottom: '1em'}}
 									>	
+									<legend>Transmission Type </legend>
 								<div className="row">
 								<div className="col-sm-4">
 								  <div className="form-group">
-								  
-								  <label htmlFor="product_attribute_transmission_id	"> Choose Transmission</label>
-								
+								 
 								  
 								
-								<select name="product_attribute_transmission_id	" id="product_attribute_transmission_id	">
-								 <option>Select</option>
-								<option value="Automatic">Automatic</option>
-								  <option value="Manual">Manual</option>
-								  <option value="automat">automat</option>
-								 onChange={this.handleChange}
-										onBlur={this.handleBlur}
-								</select>
+									
+									 <select name="product_attribute_transmission_id[]" 
+									  >
+										{this.buildOptions('prdattrtransmissions')}
+									
+									  </select>
+								 
+								
+								 </div>
 							  </div>
 								</div>
-								</div>
+								
 								</fieldset>
 								
 								
