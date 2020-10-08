@@ -16,6 +16,7 @@ import Moment from 'moment';
 class AddProduct extends Component {
 	
 	
+	
   constructor(props) {
     super(props);
 		this.state = {isToggleOn: true};
@@ -24,15 +25,20 @@ class AddProduct extends Component {
       title: 'required|min:3',
       sub_title: 'required|min:3',
     });
-		this.handleChecked = this.handleChecked.bind(this);
+		
+		this.handleElectronicSelect = this.handleElectronicSelect.bind(this);
+		this.handleProFlatSelect = this.handleProFlatSelect.bind(this);
+		
 		this.handleChange = this.handleChange.bind(this);
 		this.handleDate = this.handleDate.bind(this);
-		
+		this.onImageChange = this.onImageChange.bind(this);
 		 
 		
     this.state = {
       // name: '',
-	  isLoading: false, 
+	  isLoading: false,
+	bedroomFlat: 0 ,
+	bedroomHouse: 0,
       title: '',
       sub_title: '',
       product_category: '',
@@ -44,18 +50,7 @@ class AddProduct extends Component {
       product_condition: '',
       product_brand: '',
       product_year: '',
-      fuel_type: '',
-      cd_player: '',
 	  startDate: new Date(),
-	  
-      anti_lock_brakes: '',
-      air_conditioning: '',
-      power_seat: '',
-      power_locks: '',
-      cruise_control: '',
-      suv: '',
-      air_bags: '',
-      sunroof: '',
       engine: '',
       // transmission: '',
       warrenty: '',
@@ -87,6 +82,17 @@ class AddProduct extends Component {
 	  og_title: '',
 	  og_image: '',
 	  og_desc: '',
+	  property_name: '',
+	  property_condition: '',
+	  addressOne: '',
+	  addressTwo: '',
+	  postalCode: '',
+	  city: '',
+	  state: '',
+	  property_bb: '',
+	  
+	  holiday_home: '',
+	  owner_img: null,
       // shhipping_rate: '',
       // free_shipping: '',
       // item_location: '',
@@ -100,12 +106,32 @@ class AddProduct extends Component {
 	  visible: false,
 	  data:[],
 	  brands:[],
-	  prdattrtransmissions:[],
-	  prdattrfuels:[],
+	  prdattrtransmission:[],
+	  prdattrfuel:[],
 	  pdctfuel:[],
 	  pdcttransmission:[],
 	  pdctelectronic:[],
 	  prdattrelectronic:[],
+	  pdctattrmotor:[],
+	  
+	  pdctmotor:[],
+	  product_electronic_id:[],
+	 
+	  
+	  product_motor_id:[],
+	  propertytyp:[],
+	  propertyatt:[],
+	  propertyaatflattyp:[],
+	  propertyflattyp:[],
+	  
+	  propertycellg:[],
+	  propertyattcell:[],
+	  property_service_id:[],
+	  // property_bedroom_flat_id:[],
+	  product_fuel_id:'',
+	  property_celling_id:'',
+	  property_type_id:'',
+	  product_transmission_id:'',
 	  
 	  
 	  
@@ -143,7 +169,7 @@ class AddProduct extends Component {
 		    method: 'get', 
 	        headers: new Headers({
 		    'Authorization': 'bearer '+ access_token
-    })
+        })
 		})
 		// fetch(this.categoryfetch)
 			.then(response => 
@@ -160,12 +186,21 @@ class AddProduct extends Component {
 		    this.setState({ parentCategory: response.data.categories });
 			this.setState({ pcat: response.data.categories });
 			this.setState({ brands: response.data.brands });
-			this.setState({ prdattrtransmissions: response.data.prdattrtransmissions });
-			this.setState({ prdattrfuels: response.data.prdattrfuels });
+			this.setState({ prdattrtransmission: response.data.prdattrtransmission});
+			this.setState({ prdattrfuel: response.data.prdattrfuel});
 			this.setState({ pdctfuel: response.data.pdctfuel });
 			this.setState({ pdcttransmission: response.data.pdcttransmission });
 			this.setState({ pdctelectronic: response.data.pdctelectronic });
 			this.setState({ prdattrelectronic: response.data.prdattrelectronic });
+			this.setState({ pdctmotor: response.data.pdctmotor });
+			this.setState({ pdctattrmotor: response.data.pdctattrmotor });
+			this.setState({ propertyatt: response.data.propertyatt });
+			this.setState({ propertytyp: response.data.propertytyp });
+			this.setState({ propertyaatflattyp: response.data.propertyaatflattyp });
+			this.setState({ propertyflattyp: response.data.propertyflattyp });
+		
+			this.setState({ propertyattcell: response.data.propertyattcell });
+			this.setState({ propertycellg: response.data.propertycellg });
 			
 			
 				console.log(response.data);
@@ -179,8 +214,48 @@ class AddProduct extends Component {
    
 	}
 	
-
-	  
+		increment = (e) => {
+			e.preventDefault();
+		this.setState({
+		bedroomFlat: this.state.bedroomFlat + 1
+		});
+		// alert("dsdsd");
+		}
+		
+		decrement = (e) => {
+			e.preventDefault();
+		if(this.state.bedroomFlat <= 0){
+        this.setState({
+            bedroomFlat:0
+        });
+      }else {
+        this.setState({
+            bedroomFlat: this.state.bedroomFlat - 1
+        });
+      }
+  }
+	add = (e) => {
+			e.preventDefault();
+		this.setState({
+		bedroomHouse: this.state.bedroomHouse + 1
+		});
+		// alert("dsdsd");
+		}
+		
+		minus = (e) => {
+			e.preventDefault();
+		if(this.state.bedroomHouse <= 0){
+        this.setState({
+            bedroomHouse:0
+        });
+      }else {
+        this.setState({
+            bedroomHouse: this.state.bedroomHouse - 1
+        });
+      }
+  }
+   
+  
 	/** image uploading **/
         uploadMultipleFiles = (e) => 
 		{
@@ -211,128 +286,189 @@ class AddProduct extends Component {
 		    var array = [...this.state.product_image]; // make a separate copy of the array
 	        var index = array.indexOf(id);
 	 
-	        if (index !== -1)
+			if (index !== -1)
 				{
 		            array.splice(index, 1);
 		            this.setState({product_image: array});
 	            }
         }
 	
-	//iamge///	
+	/* owmer Image   */
+	 onImageChange = (e) => {
+		 // alert('d')
+   e.preventDefault(); 
+   let reader = new FileReader();
+   let file = e.target.files[0];
+// console.log(file)
+   reader.onloadend = () => {
+	   // alert(reader.result)
+     this.setState({
+		 owner_img: reader.result
+     });
+   } 
+   // alert(reader.result);
+
+  reader.readAsDataURL(file)
+ }
+ 
+ 
+ 
 	  
-	    handleDate(date)
+	handleDate(date)
+	{
+		this.setState(
 		{
-		    this.setState(
-			{
-			    startDate:date
-		    })
-	   }
+			startDate:date          
+		})
+	}
 	  
-	     handleSubmit = (e) =>
+   handleSubmit = (e) =>
+   {
+		// alert(this.state.property_celling_id);
+		 e.preventDefault();
+		 this.setState({ isLoading: true });
+		 const { title, sub_title } = this.state;
+		 const credentials =
 		 {
-			
-		     e.preventDefault();
-		     this.setState({ isLoading: true });
-		     const { title, sub_title } = this.state;
-		     const credentials =
-			 {
-		         title,
-		         sub_title,
-		     };
-		
-		 if(this.state.description == '')
-		 {
-		     this.setState({ errorDesc: 'Please enter the desciption.' });
-			 this.setState({ isLoading: false });
-			 return false;
-		 }
-		
-		
+			 title,
+			 sub_title,
+		 };
 	
-		  this.validator.validateAll(credentials).then((success) => 
-		  {
-		      if (success)
-				  {
+	 if(this.state.description == '')
+	 {
+		 this.setState({ errorDesc: 'Please enter the desciption.' });
+		 this.setState({ isLoading: false });
+		 return false;
+	 }
+	
+	
+
+	  this.validator.validateAll(credentials).then((success) => 
+	  {
+		  if (success)
+			  {
+	
+		 // alert(this.state.product_fuel_id);
+		 // alert(this.state.product_transmission_id);
+				  let formData = new FormData();
+				  formData.append("name", this.state.name);
+				  formData.append("title", this.state.title);
+				  formData.append("sub_title", this.state.sub_title);
+				  formData.append("product_category", this.state.product_category);
+				  formData.append("description", this.state.description);
+				  formData.append("vin", this.state.vin);
+				  this.state.product_image.forEach((image_file) => 
+				   { 
 		
-			 // alert(this.state.warrenty);
-			          let formData = new FormData();
-		              formData.append("name", this.state.name);
-					  formData.append("title", this.state.title);
-					  formData.append("sub_title", this.state.sub_title);
-					  formData.append("product_category", this.state.product_category);
-					  formData.append("description", this.state.description);
-					  formData.append("vin", this.state.vin);
-		              this.state.product_image.forEach((image_file) => 
-			           { 
-			
-                           formData.append('file[]', image_file);
-				       });
-			          formData.append("product_condition", this.state.product_condition);
-			          formData.append("product_brand", this.state.product_brand);
-			          formData.append("product_year",Moment(this.state.startDate).format('YYYY'));
-			          formData.append("fuel_type", this.state.fuel_type);
-			          formData.append("cd_player", this.state.cd_player);
-			          formData.append("anti_lock_brakes", this.state.anti_lock_brakes);
-			          formData.append("air_conditioning", this.state.air_conditioning);
-			          formData.append("power_seat", this.state.power_seat);
-			          formData.append("power_locks", this.state.power_locks);
-			          formData.append("cruise_control", this.state.cruise_control);
-			          formData.append("suv", this.state.suv);
-			          formData.append("air_bags", this.state.air_bags);
-			          formData.append("sunroof", this.state.sunroof);
-			          formData.append("engine", this.state.engine);
-			          // formData.append("transmission", this.state.transmission);
-			          formData.append("warrenty", this.state.warrenty);
-			          formData.append("product_make", this.state.product_make);
-			          formData.append("product_model", this.state.product_model);
-					  formData.append("interior", this.state.interior);
-					  formData.append("exterior", this.state.exterior);
-					  formData.append("video_file_link", this.state.video_file_link);
-			          formData.append("youtube", this.state.youtube);
-					  formData.append("sale_by", this.state.sale_by);
-					  formData.append("selling_duration", this.state.selling_duration);
-					  formData.append("selling_price", this.state.selling_price);
-					  formData.append("selling_quantity", this.state.selling_quantity);
-					  formData.append("domestic_return", this.state.domestic_return);
-					  formData.append("international_return", this.state.international_return);
-					  formData.append("seo_title", this.state.seo_title);
-					  formData.append("meta_desc", this.state.meta_desc);
-					  formData.append("twitter_title", this.state.twitter_title);
-					  formData.append("twitter_image", this.state.twitter_image);
-					  formData.append("twitter_desc", this.state.twitter_desc);
-					  formData.append("og_title", this.state.og_title);
-				      formData.append("og_image", this.state.og_image);
-					  formData.append("og_desc", this.state.og_desc);
-	 
-			
-			
-			
-			
-			        axios(
-					{
-			            method: "post",
-			            url: this.api,
-			            data: formData,
-			            config: { headers: { "Content-Type": "multipart/form-data" } }
-			        })
-			       .then(response => 
-				   {
-				        window.scrollTo(0, 0);
-				        this.loginForm.reset();
-		  
-				    if (response.data.status)
-					 {
+					   formData.append('file[]', image_file);
+				   });
+				   
+				   this.state.product_electronic_id.forEach((val) => 
+				   { 
+				   formData.append("product_electronic_id[]", val);
+				   });
+				   this.state.prdattrelectronic.forEach((att ) => 
+				   { 
+		
+					   formData.append('pdctelectronic[]', att);
+				   });
+				    
+					this.state.product_motor_id.forEach((val) => 
+				   { 
+				   formData.append("product_motor_id[]", val);
+				   });
+				   this.state.pdctattrmotor.forEach((att ) => 
+				   { 
+		
+					   formData.append('pdctmotor[]', att);
+				   });
+				   
 					
-					     this.addNotification();
-				     }
-			      })
-			       .catch(err => 
-				   {
-				        console.log("Error: ", err);
-			       });
-			
-		      }
-		});
+				  this.state.property_service_id.forEach((val) => 
+				   { 
+				   formData.append("property_service_id[]", val);
+				   });
+				   this.state.propertyaatflattyp.forEach((att ) => 
+				   { 
+		
+					   formData.append('propertyflattyp[]', att);
+				   });
+				   
+				  
+				   
+				  
+				   
+				  formData.append("product_condition", this.state.product_condition);
+				  formData.append("product_brand", this.state.product_brand);
+				  formData.append("product_fuel_id", this.state.product_fuel_id);
+				  formData.append("property_celling_id", this.state.property_celling_id);
+				  formData.append("bedroomFlat", this.state.bedroomFlat);
+				  formData.append("bedroomHouse", this.state.bedroomHouse);
+				  formData.append("property_type_id", this.state.property_type_id);
+				  formData.append("product_transmission_id", this.state.product_transmission_id);
+				  formData.append("product_year",Moment(this.state.startDate).format('YYYY'));
+				  formData.append("engine", this.state.engine);
+				  formData.append("warrenty", this.state.warrenty);
+				  formData.append("product_make", this.state.product_make);
+				  formData.append("product_model", this.state.product_model);
+				  formData.append("interior", this.state.interior);
+				  formData.append("exterior", this.state.exterior);
+				  formData.append("video_file_link", this.state.video_file_link);
+				  formData.append("youtube", this.state.youtube);
+				  formData.append("sale_by", this.state.sale_by);
+				  formData.append("selling_duration", this.state.selling_duration);
+				  formData.append("selling_price", this.state.selling_price);
+				  formData.append("selling_quantity", this.state.selling_quantity);
+				  formData.append("property_name", this.state.property_name);
+				  formData.append("property_condition", this.state.property_condition);
+				  formData.append("addressOne", this.state.addressOne);
+				  formData.append("addressTwo", this.state.addressTwo);
+				  formData.append("postalCode", this.state.postalCode);
+				  formData.append("city", this.state.city);
+				  formData.append("state", this.state.state);
+				  formData.append("holiday_home", this.state.holiday_home);
+				  formData.append("owner_img", this.state.owner_img);
+				  formData.append("property_bb", this.state.property_bb);
+				  formData.append("domestic_return", this.state.domestic_return);
+				  formData.append("international_return", this.state.international_return);
+				  formData.append("seo_title", this.state.seo_title);
+				  formData.append("meta_desc", this.state.meta_desc);
+				  formData.append("twitter_title", this.state.twitter_title);
+				  formData.append("twitter_image", this.state.twitter_image);
+				  formData.append("twitter_desc", this.state.twitter_desc);
+				  formData.append("og_title", this.state.og_title);
+				  formData.append("og_image", this.state.og_image);
+				  formData.append("og_desc", this.state.og_desc);
+ 
+		
+		
+		
+		
+				axios(
+				{
+					method: "post",
+					url: this.api,
+					data: formData,
+					config: { headers: { "Content-Type": "multipart/form-data" } }
+				})
+			   .then(response => 
+			   {
+					window.scrollTo(0, 0);
+					this.loginForm.reset();
+	  
+				if (response.data.status)
+				 {
+				
+					 this.addNotification();
+				 }
+			  })
+			   .catch(err => 
+			   {
+					console.log("Error: ", err);
+			   });
+		
+		  }
+	});
 		
 		
 		
@@ -360,21 +496,20 @@ class AddProduct extends Component {
 		
     }
 	
-    handleChecked (e) {
-		const { name, checked } = e.target;
-		// alert(name);
-		// alert(checked);
-		this.setState({ [name]: e.target.checked });
-		
-		
-		
-		
-	}
+	
+	
+	
+	
 	
 	handleChange = (e) => {
 		
+		
 		const { name, value } = e.target;
+		// alert(value);
+		// alert(name);
 		this.setState({ [name]: value });
+		
+		
 		// alert(value);
 		 // If a field has a validation error, we'll clear it when corrected.
 		const { errors } = this.state;
@@ -435,6 +570,141 @@ class AddProduct extends Component {
 		
 	}
 	
+	handleElectronicSelect(event)
+	{		
+		// alert(event.target.value);
+		
+				let electronic_list = this.state.product_electronic_id;
+				// console.log(electronic_list);
+				let check = event.target.checked;
+				// alert(check);
+				let checked_electronic = event.target.value;
+				if(check)
+					
+					{
+						
+						this.setState(
+					{
+						product_electronic_id: [...this.state.product_electronic_id, checked_electronic]
+					})
+					}
+							else
+								{ 
+									var index = electronic_list.indexOf(checked_electronic);
+									 if (index > -1)
+										{
+											electronic_list.splice(index, 1);
+											this.setState(
+												{
+														product_electronic_id: electronic_list
+												})
+										} 
+									}	
+				// alert(this.state.product_electronic_id);
+	}
+	 /* Checck Box of property services type */
+	handleProFlatSelect(event)
+	{	
+		
+		
+		
+				let propertyflat_list = this.state.property_service_id;
+				// console.log(propertyflat_list);
+				let check = event.target.checked;
+				// alert(check);
+				let checked_propertyflat = event.target.value;
+				if(check)
+					
+					{
+						
+						this.setState(
+					{
+						property_service_id: [...this.state.property_service_id, checked_propertyflat]
+					})
+					}
+							else
+								{ 
+									var index = propertyflat_list.indexOf(checked_propertyflat);
+									 if (index > -1)
+										{
+											propertyflat_list.splice(index, 1);
+											this.setState(
+												{
+														property_service_id: propertyflat_list
+												})
+										} 
+									}	
+
+	}
+	// /*Bedroom checkbox  */
+	// handleProBedrSelect(event)
+	// {	
+		
+		
+		
+				// let propertybed_list = this.state.property_bedroom_flat_id;
+				// console.log(propertyflat_list);
+				// let check = event.target.checked;
+				// alert(check);
+				// let checked_propertybed = event.target.value;
+				// if(check)
+					
+					// {
+						
+						// this.setState(
+					// {
+						// property_bedroom_flat_id: [...this.state.property_bedroom_flat_id, checked_propertybed]
+					// })
+					// }
+							// else
+								// { 
+									// var index = propertybed_list.indexOf(checked_propertybed);
+									 // if (index > -1)
+										// {
+											// propertybed_list.splice(index, 1);
+											// this.setState(
+												// {
+														// property_bedroom_flat_id: propertybed_list
+												// })
+										// } 
+									// }	
+
+	// }
+	
+	
+	handleMototSelect = (event) => 
+	{		
+		// alert(event.target.value);
+		
+				let motor_list = this.state.product_motor_id;
+				
+				let check = event.target.checked;
+				// alert(check);
+				let checked_motor = event.target.value;
+				if(check)
+					
+					{
+						
+						this.setState(
+					{
+						product_motor_id: [...this.state.product_motor_id, checked_motor]
+					})
+					}
+							else
+								{ 
+									var index = motor_list.indexOf(checked_motor);
+									 if (index > -1)
+										{
+											motor_list.splice(index, 1);
+											this.setState(
+												{
+														product_motor_id: motor_list
+												})
+										} 
+									}	
+				// alert(this.state.product_electronic_id);
+	}
+	
 	handleSubCatChange = (id) => {
 		// alert(id);
 		let formData = new FormData();
@@ -479,6 +749,7 @@ class AddProduct extends Component {
 		if(key=='brands')
 		{
 		let brandarr = [];
+		
 		brandarr.push(<option key="0" value="0">Select The Brands</option>)
 		{
 			this.state.brands.map((name, index) => (
@@ -488,27 +759,49 @@ class AddProduct extends Component {
            return brandarr;
 		 }
 		 
-		 if(key=='prdattrfuels')
+		 if(key=='prdattrfuel')
 		 {
 		     let profuel = [];
 		      profuel.push(<option key="0" value="0">Select The Fuels</option>)
 		     {
-				 this.state.prdattrfuels.map((name, index) => (
+				 this.state.prdattrfuel.map((name, index) => (
                   profuel.push(<option key={name.id} value={name.id}>{name.name}</option>)
 		 ))}
       
            return profuel;
 		 }
-	if(key=='prdattrtransmissions')
+		if(key=='prdattrtransmission')
 		 {
 		     let protrns = [];
 		      protrns.push(<option key="0" value="0">Select The Transmission</option>)
 		     {
-				 this.state.prdattrtransmissions.map((name, index) => (
+				 this.state.prdattrtransmission.map((name, index) => (
                   protrns.push(<option key={name.id} value={name.id}>{name.name}</option>)
 		 ))}
       
            return protrns;
+		 }
+		 if(key=='propertyatt')
+		 {
+		     let propert = [];
+		      propert.push(<option key="0" value="0">Select The Property</option>)
+		     {
+				 this.state.propertyatt.map((name, index) => (
+                  propert.push(<option key={name.id} value={name.id}>{name.name}</option>)
+		 ))}
+      
+           return propert;
+		 }
+		 if(key=='propertyattcell')
+		 {
+		     let propertcllin = [];
+		      propertcllin.push(<option key="0" value="0">Select The Celling Type </option>)
+		     {
+				 this.state.propertyattcell.map((name, index) => (
+                  propertcllin.push(<option key={name.id} value={name.id}>{name.name}</option>)
+		 ))}
+      
+           return propertcllin;
 		 }
 		
      
@@ -527,14 +820,24 @@ class AddProduct extends Component {
 	const parentCategory = Array.from(this.state.parentCategory);
 	const pdctelectronic = Array.from(this.state.pdctelectronic);
 	const prdattrelectronic = Array.from(this.state.prdattrelectronic);
-	const prdattrtransmissions = Array.from(this.state.prdattrtransmissions);
+	const prdattrtransmission = Array.from(this.state.prdattrtransmission);
 	const pdcttransmission = Array.from(this.state.pdcttransmission); 
-	const prdattrfuels = Array.from(this.state.prdattrfuels);
+	const prdattrfuel = Array.from(this.state.prdattrfuel);
+	const pdctmotor = Array.from(this.state.pdctmotor);
+	const pdctattrmotor = Array.from(this.state.pdctattrmotor);
 	const pdctfuel = Array.from(this.state.pdctfuel);
+	const propertyatt = Array.from(this.state.propertyatt);
+	const propertytyp = Array.from(this.state.propertytyp);
+	const propertyflattyp = Array.from(this.state.propertyflattyp);
+	const propertyaatflattyp = Array.from(this.state.propertyaatflattyp);
+
+	const propertyattcell = Array.from(this.state.propertyattcell);
+	const propertycellg = Array.from(this.state.propertycellg);
 	
 	
 	
-	const productImages = Array.from(this.state.product_image); 
+	
+	const productImages = Array.from(this.state.product_image);
 	
 	const {  errors } = this.state;
 	
@@ -601,7 +904,7 @@ class AddProduct extends Component {
 					
                   {/* /.card-header */}
                  
-				 <div className="container">
+				 <div className="container-fluid">
 					<div className="row">
 					  <div className="section-login col-lg-12 ml-auto mr-auto">
 
@@ -800,50 +1103,55 @@ class AddProduct extends Component {
 									
 									
 									{/*  product image upload start*/}
+										{/*   <label htmlFor="product_image">Product Image</label>
 									<fieldset 
 									  style={{border: '1px solid #c0c0c0', margin: '0 2px'}}
 									>
 									<div className="form-group">
-									  <label htmlFor="product_image">Product Image</label>
+									
 										
 										<div id="picture" style={{display: 'block'}} className='py-3 px-3'>
 											<div className='d-flex'>
+											<div className='row'>
+											
+												
+											
 											{this.state.product_image != null &&
 											  productImages.slice((productImages.length - 1), productImages.length).map((options, key) => ( 
 												<div style={{visibility: 'visible', animationDuration: '1.8s', animationName: 'fadeIn'}}>
-												  <input 
+													{/* <input 
 												    id="imageUploads" 
 													type="file" 
 													name="product_image" 
 													onChange={this.uploadMultipleFiles} 
 													multiple="multiple"
 													style={{zIndex: '10', marginTop: '-14px', opacity: '0', height: '150px', position: 'absolute', width: '150px'}}
-												  />
+													/>  
 												  <div style={{zIndex: '100', position: 'relative', textAlign: 'right', marginRight: '10%', top: '-31%'}}> 
 												    <span onClick={() => this.resetFile(options)} ><i className="fa fa-times-circle-o" /></span>
 												  </div>
 												  
-												  <div className="pr-3" style={{position: 'relative', float: 'left', marginTop: '-20%',width: '200px', marginLeft: '-2px', height: '175px'}} >
+												  <div className="pr-3" style={{position: 'relative', float: 'left', marginTop: '-20%',width: '200px', marginLeft: '-2px', height: '175px' , margin: '0px', marginTop: '17px', marginRight: '-4px', marginBottom: '17px', marginLeft: '4px'}} >
 												  <img className="w-100" src={options} style={{width: '200px !important', height: '175px', background: 'white', border: '2px dashed #ccc',visibility: 'visible', animationDuration: '1.8s', animationName: 'fadeIn'}}/>
 												</div>
 											  </div>
 											))
 											}
-											
+											 <div className="grid-container">
 											<div 
 											  style={{visibility: 'visible', 
 												animationDuration: '1.8s', 
 												animationName: 'fadeIn', 
-												width: '120px', 
-												height: '120px', 
+												width: '123px', 
+												height: '116px', 
 												textAlign: 'center', 
-												marginTop: '10px',
-												border: '2px dashed #ccc',
+												marginTop: '-11px',
+												border: '0px dashed #ccc',
 												color: '#ccc',
 												fontSize: '13pt',
 												float: 'left',
-												marginRight: '9px',
-												marginBottom: '5px',}}>
+												marginRight: '14px',
+												 marginBottom: '1px',}}>
 											  <input 
 												id="imageUploads" 
 												type="file" 
@@ -851,12 +1159,13 @@ class AddProduct extends Component {
 												onChange={this.uploadMultipleFiles} 
 												multiple="multiple"
 												style={{zIndex: '10', marginTop: '-14px', opacity: '0', height: '120px', position: 'absolute', width: '120px'}}
-											  />
+											  /> 
 											 <i className="fa fa-plus picture_bx_file_add mt-4" /> 
 											 <p>Add Photos</p>
 											  
 										   </div>
 										  
+										 	
 										   {this.state.product_image.length >= 2 &&
 											  productImages.slice(0, (productImages.length - 1)).map((options, key) => ( 
 												<div style={{visibility: 'visible', animationDuration: '1.8s', animationName: 'fadeIn'}}>
@@ -886,27 +1195,103 @@ class AddProduct extends Component {
 										
                 
 										
+								
+									</div>
+									</div>
 									</div>
 									</fieldset>
-									<br/>
+											<br/> */}
 									
+									
+									  <label htmlFor="product_image">Product Image</label>
+									
+									<fieldset 
+									  style={{border: '1px solid #c0c0c0'}}
+									>
+									<div className="row m-0">
+									  {this.state.product_image != '' &&
+										<div className='col-md-4 col-sm-4 col-lg-4 border'>
+										  
+										  {productImages.slice((productImages.length - 1), productImages.length).map((options, key) => ( 
+												<div style={{visibility: 'visible', animationDuration: '1.8s', animationName: 'fadeIn'}}>
+												  <div className='text-right' style={{position: 'absolute'}}> 
+												    <span onClick={() => this.resetFile(options)} ><i className="fa fa-times-circle-o" /></span>
+												  </div>
+												  
+												  <div >
+												  <img className=" mx-auto d-block w-100" src={options} />
+												  </div>
+											  </div>
+											 ))
+											 }
+										  </div>  
+										  
+										}
+										
+										
+										<div className='col-md-8 col-sm-8 col-lg-8 '>
+										  <div className='row'>
+										    <div className='col-md-2 col-sm-2 col-lg-2 border' style={{height: '8rem', maxHeight: '8rem'}}>
+											  
+											   <div className="box">
+												<input 
+												   type="file"
+												   name="product_image" 
+												   id="product_image" 
+												   className="d-none" 
+												   multiple='multiple' 
+												   accept='image/*'
+												   ref={this.fileInput} 
+												   onChange={this.uploadMultipleFiles}
+												/>
+												<label htmlFor="product_image" className="text-center" style={{ background: '#fff', verticalAlign: 'top'}}>
+												  <span className='text-muted'>
+												    <i className="fa fa-plus picture_bx_file_add" /> 
+													<p>Add Photos</p>
+												  </span>
+												</label>
+											  </div>
+										   
+											</div>
+											
+											
+											{this.state.product_image.length >= 2 &&
+											  productImages.slice(0, (productImages.length - 1)).map((options, key) => ( 
+											    <div className='col-md-2 col-sm-2 col-lg-2 border p-0' style={{height: '8rem', maxHeight: '8rem', visibility: 'visible', animationDuration: '1.8s', animationName: 'fadeIn'}}>
+												  <div className='text-right' style={{zIndex: '100', position: 'absolute'}}> 
+												    <span onClick={() => this.resetFile(options)} ><i className="fa fa-times-circle-o" /></span>
+												  </div>
+												  
+												  <img className="h-100 w-100" src={options}/>
+												 
+											    </div>
+											))
+											}
+											
+										  </div>
+										
+										</div>
+									</div>
+									</fieldset>
 									
 								
 								{/*  product image upload end*/}
+								 <label 	>Choose Product  Condition </label><br/>
 								<fieldset 
 									style={{border: '1px solid #c0c0c0', margin: '0 2px'}}
 								>
+								<br/>
 								
 									<div className="row">
 									<div className="col-sm-4">
 									  <div className="form-group">
-										  <label htmlFor="product_condition">Choose Product  Condition </label><br/>
-										  <select name="product_condition" id="product_condition">
+										 
+									 &nbsp;&nbsp; <select name="product_condition" id="product_condition" onChange={this.handleChange}>
 										
-								    <option>Select</option>
-								    <option value="Diesel">OLd</option>
-								    <option value="Petrol">New</option>
-								    onChange={this.handleChange}
+								    <option>Select</option>&nbsp;&nbsp;
+								    <option value="New">New</option>
+								    <option value="OLd">OLd</option>
+								   
 										onBlur={this.handleBlur}
 								 
 								</select>
@@ -918,45 +1303,29 @@ class AddProduct extends Component {
 							   	<br/>
 							   
 							   
-							   
+							   <label htmlFor="product_brand">Brand</label> <br/>  
 							   <fieldset 
 									style={{border: '1px solid #c0c0c0', margin: '0 2px'}}
-								>
+								> <br/>
+								
 								<div className="form-group ">
 								
 								  <div className="col-md-4 col-sm-4">
-									<label htmlFor="product_brand">Brand</label> <br/>                
+								               
 																																	   																							   
 									  <select name="product_brand" 
-									  >
+									  onChange={this.handleChange}
+										
+									 >
+									  
+									  
 										{this.buildOptions('brands')}
 									
 									  </select>
 								   </div>
 								   </div>
 								   </fieldset>
-							   {/*
-								<div className="form-group">
-								  <label htmlFor="product_brand">Product Brand</label>
-								  <input
-									id="product_brand"
-									type="text"
-									className={classNames('form-control', {
-									  'is-invalid': 'product_brand' in errors,
-									})}
-									name="product_brand"
-									placeholder="Enter Product Brand"
-									onChange={this.handleChange}
-									onBlur={this.handleBlur}
-								  />
-								  
-								  {'product_brand' in errors && (
-									<div className="invalid-feedback">
-									  {errors.product_brand}
-									</div>
-								  )}
-								</div>
-									  */}
+							 
 								<div className="form-group">
 								  <label htmlFor="product_year">Product Yearr</label><br/>
 								  
@@ -979,23 +1348,24 @@ class AddProduct extends Component {
 									
 									
 									{/*  Fuel type */}
+									<label>Fuel Type</label> <br/>  
 									
 									<fieldset 
-								style={{border: '1px solid #c0c0c0', margin: '0 2px', padding: '0.35em 0.625em 0.75em', display: 'block', marginInlineStart: '2px', marginInlineEnd: '2px', paddingBlockStart: '0.35em', paddingInlineStart: '0.75em', paddingInlineEnd: '23.75em', paddingBlockEnd: '0.625em', minInlineSize: 'min-content', marginBottom: '1em'}}
-									>	
-									
+									style={{border: '1px solid #c0c0c0', margin: '0 2px'}}
+								><br/>
 									
 								  
-								   <legend>Fuel Type </legend>
+								   
 							  
 							  
 								<div className="form-group">
 								  
-								
+								&nbsp;&nbsp;
 									
-									 <select name="product_attribute_fuel_id[]" 
+									 <select name="product_fuel_id" 
+										onChange={this.handleChange}
 									  >
-										{this.buildOptions('prdattrfuels')}
+										{this.buildOptions('prdattrfuel')}
 									
 									  </select>
 								 
@@ -1015,19 +1385,51 @@ class AddProduct extends Component {
 							  
 							  
 								<div className="form-group">
+								
 								 
 							
 								    {this.state.prdattrelectronic.map((name, index) => (
 								    <label className="checkbox-inline">
-                                    <input type="checkbox" name='product_electronic_id[]' value='{name.id}' />
+                                    <input type="checkbox" name='product_electronic_id[]' value={name.id} onChange={this.handleElectronicSelect}
 									
-									{name.name}
+										onBlur={this.handleBlur} /> &nbsp;&nbsp;
+									
+									{name.name}&nbsp;&nbsp;&nbsp;
 									</label>
 									
 										
 									 
 									))}
 									
+									
+								  </div>
+								 
+								  	</fieldset>
+
+									{ /*motors checkbox  */}
+								<label>Tick the require one Type</label> <br/>  
+							<fieldset 
+							  style={{border: '1px solid #c0c0c0', margin: '0 2px', padding: '0.35em 0.625em 0.75em', display: 'block', marginInlineStart: '2px', marginInlineEnd: '2px', paddingBlockStart: '0.35em', paddingInlineStart: '0.75em', paddingInlineEnd: '23.75em', paddingBlockEnd: '0.625em', minInlineSize: 'min-content', marginBottom: '1em'}}
+							>
+							  
+							  
+							  
+								<div className="form-group">
+								 
+							
+								    {this.state.pdctattrmotor.map((name, index) => (
+								    <label className="checkbox-inline">
+                                    <input type="checkbox" name='product_motor_id[]' value={name.id}onChange={this.handleMototSelect}
+										onBlur={this.handleBlur}
+									/> &nbsp;&nbsp;
+									
+									{name.name}&nbsp;&nbsp;&nbsp;
+									
+									</label>
+									
+										
+									 
+									))}
 									
 								  </div>
 								  
@@ -1045,9 +1447,11 @@ class AddProduct extends Component {
 								  
 								
 									
-									 <select name="product_attribute_transmission_id[]" 
-									  >
-										{this.buildOptions('prdattrtransmissions')}
+									 <select name="product_transmission_id" 
+									  onChange={this.handleChange}
+										onBlur={this.handleBlur}
+										product_electronic_id>
+										{this.buildOptions('prdattrtransmission')}
 									
 									  </select>
 								 
@@ -1269,28 +1673,7 @@ class AddProduct extends Component {
 							
 							
 				
-							<div className="col-sm-4">
-								<div className="form-group">
-								  <label htmlFor="ram_memory_card"> Ram / Memory Card </label>
-								  <input
-									id="ram_memory_card"
-									type="text"
-									className={classNames('form-control', {
-									  'is-invalid': 'ram_memory_card' in errors,
-									})}
-									name="ram_memory_card"
-									placeholder="Enter Ram / Memory Card"
-									onChange={this.handleChange}
-									onBlur={this.handleBlur}
-								  />
-								  
-								  {'ram_memory_card' in errors && (
-									<div className="invalid-feedback">
-									  {errors.ram_memory_card}
-									</div>
-								  )}
-								</div>
-								</div>
+						
 								</div>
 								
 								
@@ -1546,6 +1929,526 @@ class AddProduct extends Component {
 								
 									
 								
+								
+								{/*  Property type */}
+									<label>Property Type</label> <br/>  
+									
+									<fieldset 
+									style={{border: '1px solid #c0c0c0', margin: '0 2px'}}
+								><br/>
+									
+								  
+								   
+							  
+							  
+								<div className="form-group">
+								  
+								&nbsp;&nbsp;
+									
+									 <select name="property_type_id" 
+										onChange={this.handleChange}
+									  >
+										{this.buildOptions('propertyatt')}
+									
+									  </select>
+								 
+								
+								 </div>
+								
+							
+								</fieldset>
+								
+								 
+								  <label >Property Name</label><br/>
+								<fieldset 
+								style={{border: '1px solid #c0c0c0', margin: '0 2px', padding: '0.35em 0.625em 0.75em', display: 'block', marginInlineStart: '2px', marginInlineEnd: '2px', paddingBlockStart: '0.35em', paddingInlineStart: '0.75em', paddingInlineEnd: '23.75em', paddingBlockEnd: '0.625em', minInlineSize: 'min-content', marginBottom: '1em'}}
+									>	<br/>
+									
+								<div className="row">
+								
+										
+									<div className="form-group">
+								
+								  <input
+									id="property_name"
+									type="text"
+									className={classNames('form-control', {
+									  'is-invalid': 'property_name' in errors,
+									})}
+									name="property_name"
+									placeholder="Enter Propert Name"
+									onChange={this.handleChange}
+									onBlur={this.handleBlur}
+								  />
+								  
+								  {'property_name' in errors && (
+									<div className="invalid-feedback">
+									  {errors.property_name}
+									</div>
+									 )}
+									
+									 </div>
+									 </div>
+									 </fieldset>
+									 
+									 {/*  property type*/}
+									  <label >Choose property  Condition </label><br/>
+								<fieldset 
+									style={{border: '1px solid #c0c0c0', margin: '0 2px'}}
+								>
+								<br/>
+								
+									<div className="row">
+									<div className="col-sm-6">
+									  <div className="form-group">
+										 
+									 &nbsp;&nbsp; <select name="property_condition" id="property_condition" onChange={this.handleChange}>
+										
+								    <option>Select</option>&nbsp;&nbsp;
+								    <option value="New">New</option>
+								    <option value="New">OLd</option>
+								    
+										
+								 
+								</select>
+								
+										</div>
+									</div>
+									
+							   </div>
+							   
+							   </fieldset>
+									 <label >Property Location</label><br/>
+								<fieldset 
+								style={{border: '1px solid #c0c0c0', margin: '0 2px', padding: '0.35em 0.625em 0.75em', display: 'block', marginInlineStart: '2px', marginInlineEnd: '2px', paddingBlockStart: '0.35em', paddingInlineStart: '0.75em', paddingInlineEnd: '23.75em', paddingBlockEnd: '0.625em', minInlineSize: 'min-content', marginBottom: '1em'}}
+									><br/>
+									
+								<div className="row">
+								
+										<div className="col-sm-6">
+									<div className="form-group">
+								<label >Address 1</label><br/>
+								  <input
+									id="addressOne"
+									type="text"
+									className={classNames('form-control', {
+									  'is-invalid': 'addressOne' in errors,
+									})}
+									name="addressOne"
+									placeholder="Enter Address 1"
+									onChange={this.handleChange}
+									onBlur={this.handleBlur}
+								  />
+								  
+								  {'addressone' in errors && (
+									<div className="invalid-feedback">
+									  {errors.addressOne}
+									</div>
+									 )}
+									
+									 </div>
+									 </div>
+									 
+									 
+									 <div className="col-sm-6">
+									<div className="form-group">
+								 <label >Address 2</label><br/>
+								  <input
+									id="addressTwo"
+									type="text"
+									className={classNames('form-control', {
+									  'is-invalid': 'addressTwo' in errors,
+									})}
+									name="addressTwo"
+									placeholder="Enter Address 2"
+									onChange={this.handleChange}
+									onBlur={this.handleBlur}
+								  />
+								  
+								  {'addresstwo' in errors && (
+									<div className="invalid-feedback">
+									  {errors.addressTwo}
+									</div>
+									 )}
+									
+									 </div>
+									 </div>
+									 </div>
+									 <div className="row">
+									  <div className="col-sm-6">
+									<div className="form-group">
+								 <label >postal Code</label><br/>
+								  <input
+									id="postal_code"
+									type="text"
+									className={classNames('form-control', {
+									  'is-invalid': 'postalCode' in errors,
+									})}
+									name="postalCode"
+									placeholder="Enter Postal Code Of City"
+									onChange={this.handleChange}
+									onBlur={this.handleBlur}
+								  />
+								  
+								  {'postal_code' in errors && (
+									<div className="invalid-feedback">
+									  {errors.postalCode}
+									</div>
+									 )}
+									
+									 </div>
+									 </div>
+									 
+								<div className="col-sm-6">
+								<div className="form-group">
+								 <label >City</label><br/>
+								  <input
+									id="city"
+									type="text"
+									className={classNames('form-control', {
+									  'is-invalid': 'city' in errors,
+									})}
+									name="city"
+									placeholder="Enter  City"
+									onChange={this.handleChange}
+									onBlur={this.handleBlur}
+								  />
+								  
+								  {'city' in errors && (
+									<div className="invalid-feedback">
+									  {errors.city}
+									</div>
+									 )}
+									
+									 </div>
+									 </div>
+									 </div>
+									 
+									  <div className="row">
+									  <div className="col-sm-6">
+									<div className="form-group">
+								 <label >State</label><br/>
+								  <input
+									id="state"
+									type="text"
+									className={classNames('form-control', {
+									  'is-invalid': 'state' in errors,
+									})}
+									name="state"
+									placeholder="Enter State Name"
+									onChange={this.handleChange}
+									onBlur={this.handleBlur}
+								  />
+								  
+								  {'state' in errors && (
+									<div className="invalid-feedback">
+									  {errors.state}
+									</div>
+									 )}
+									
+									 </div>
+									 </div>
+									 </div>
+									 
+									 </fieldset> 
+									 
+									 {/*  owner image uploads*/}
+									 <label> Owner Image</label><br/>
+									 								<fieldset 
+								style={{border: '1px solid #c0c0c0', margin: '0 2px', padding: '0.35em 0.625em 0.75em', display: 'block', marginInlineStart: '2px', marginInlineEnd: '2px', paddingBlockStart: '0.35em', paddingInlineStart: '0.75em', paddingInlineEnd: '23.75em', paddingBlockEnd: '0.625em', minInlineSize: 'min-content', marginBottom: '1em'}}
+									>	<br/>
+									 
+									<div>
+									
+									<img src={this.state.owner_img}  className = " profile-user-img img-fluid img-circle" style={{border: 'none'}} /><br/>
+									
+									<br/><input
+									type="file" 
+									name="owner_img" 
+									onChange={this.onImageChange} />
+									
+									
+									
+							
+
+			
+								
+								</div>
+								
+								</fieldset> 
+								
+								<label >B&B</label><br/>
+								<fieldset 
+								style={{border: '1px solid #c0c0c0', margin: '0 2px', padding: '0.35em 0.625em 0.75em', display: 'block', marginInlineStart: '2px', marginInlineEnd: '2px', paddingBlockStart: '0.35em', paddingInlineStart: '0.75em', paddingInlineEnd: '23.75em', paddingBlockEnd: '0.625em', minInlineSize: 'min-content', marginBottom: '1em'}}
+									>	<br/>
+								
+								<div className="col-sm-6">
+									<div className="form-group">
+								
+								  <input
+									id="property_bb"
+									type="text"
+									className={classNames('form-control', {
+									  'is-invalid': 'property_bb' in errors,
+									})}
+									name="property_bb"
+									placeholder="Enter BB data"
+									onChange={this.handleChange}
+									onBlur={this.handleBlur}
+								  />
+								  
+								  {'property_bb' in errors && (
+									<div className="invalid-feedback">
+									  {errors.property_bb}
+									</div>
+									 )}
+									
+									 </div>
+									 </div>
+									 
+									 
+									 </fieldset>	
+									 <label >Holiday Home <sub>(*  Enter Price Per day Of Home)</sub></label><br/>
+								<fieldset 
+								style={{border: '1px solid #c0c0c0', margin: '0 2px', padding: '0.35em 0.625em 0.75em', display: 'block', marginInlineStart: '2px', marginInlineEnd: '2px', paddingBlockStart: '0.35em', paddingInlineStart: '0.75em', paddingInlineEnd: '23.75em', paddingBlockEnd: '0.625em', minInlineSize: 'min-content', marginBottom: '1em'}}
+									>	<br/>
+								<div className="col-sm-6">
+									<div className="form-group">
+								
+								  <input
+									id="holiday_home"
+									type="number"
+									className={classNames('form-control', {
+									  'is-invalid': 'holiday_home' in errors,
+									})}
+									name="holiday_home"
+									placeholder="Enter Price of Home "
+									onChange={this.handleChange}
+									onBlur={this.handleBlur}
+								  />
+								 
+								  
+								  {'holiday_home' in errors && (
+									<div className="invalid-feedback">
+									  {errors.holiday_home}
+									</div>
+									 )}
+									
+									 </div>
+									 
+									 
+									 </div>
+									 </fieldset>
+									 
+									 {/*  select box for celing*/}
+									 
+									 <label>Celling Type</label> <br/>  
+									
+									<fieldset 
+									style={{border: '1px solid #c0c0c0', margin: '0 2px'}}
+								><br/>
+									
+								  
+								   
+							  
+							  
+								<div className="form-group">
+								  
+								&nbsp;&nbsp;
+									
+									 <select name="property_celling_id" 
+										onChange={this.handleChange}
+									  >
+										{this.buildOptions('propertyattcell')}
+									
+									  </select>
+								 
+								
+								 </div><br/>
+									
+								
+							
+								</fieldset>
+									 
+									 {/*  Property Services Types Checkbox*/}
+									 
+									 <br/>  <label>Tick The Services </label>
+								<fieldset 
+								style={{border: '1px solid #c0c0c0',
+								margin: '0 2px', 
+								padding: '0.35em 0.625em 0.75em',
+								display: 'block', 
+								marginInlineStart: '2px', 
+								marginInlineEnd: '2px',
+								paddingBlockStart: '0.35em',
+								paddingInlineStart: '0.75em',
+								paddingInlineEnd: '23.75em', 
+								paddingBlockEnd: '0.625em', 
+								minInlineSize: 'min-content',
+								marginBottom: '1em'}}
+									>
+									
+									
+							 
+							  
+							  
+								<div className="form-group">
+								
+								
+							
+								    {this.state.propertyaatflattyp.map((name, index) => (
+								    <label className="checkbox-inline">
+                                    <input type="checkbox" name='property_service_id[]' value={name.id} onChange={this.handleProFlatSelect}
+									
+										onBlur={this.handleBlur} /> &nbsp;&nbsp;
+									
+									{name.name}&nbsp;&nbsp;&nbsp;
+									</label>
+									
+										
+									 
+									))}
+									
+									
+								  </div>
+								 
+								  	</fieldset>
+										   <label>Add The Bedroom You Want </label>
+								<fieldset 
+								style={{border: '1px solid #c0c0c0',
+								margin: '0 2px', 
+								padding: '0.35em 0.625em 0.75em',
+								display: 'block', 
+								marginInlineStart: '2px', 
+								marginInlineEnd: '2px',
+								paddingBlockStart: '0.35em',
+								paddingInlineStart: '0.75em',
+								paddingInlineEnd: '23.75em', 
+								paddingBlockEnd: '0.625em', 
+								minInlineSize: 'min-content',
+								marginBottom: '1em'}}
+									><br/>
+									<div className="form-group">
+									<div className="number">
+									<div
+									id='bedroomFlat'>
+									
+									 </div>
+									
+									<span onClick = {this.decrement} style={{
+									width:'26px',
+									height:'25px',
+									background:'#f2f2f2',
+									borderRadius:'4px',
+									padding:'-6px -2px -6px -2px',
+									border:'1px solid #ddd',
+									display: 'inline-block',
+									verticalAlign: 'middle',
+									textAlign: 'center'}}
+							>-</span> 
+							&nbsp;&nbsp;&nbsp;
+            
+									 <input type="text" value={this.state.bedroomFlat}  style={{
+									height: '27px',
+									width: '58px',
+									textAlign: 'center',
+									verticalAlign: 'middle'}}/> 
+									&nbsp;&nbsp;&nbsp;									
+									
+									<span onClick = {this.increment} style={{width:'26px',
+									height:'25px',
+									background:'#f2f2f2',
+									borderRadius:'4px',
+									padding:'-6px -2px -6px -2px',
+									border:'1px solid #ddd',
+									display: 'inline-block',
+									verticalAlign: 'middle',
+									textAlign: 'center'}}
+									>+</span> 
+          
+										{/* <button onClick = {this.increment}> Add 1 </button> 
+									
+										<button onClick = {this.decrement}> Minus 1 </button>  */}
+						
+									
+											
+										  
+										  </div>
+										  </div>
+									
+									
+										</fieldset>
+										
+										{/*  Bedroom House */}
+									   <label>Add The Bedroom House You Want </label>
+								<fieldset 
+								style={{border: '1px solid #c0c0c0',
+								margin: '0 2px', 
+								padding: '0.35em 0.625em 0.75em',
+								display: 'block', 
+								marginInlineStart: '2px', 
+								marginInlineEnd: '2px',
+								paddingBlockStart: '0.35em',
+								paddingInlineStart: '0.75em',
+								paddingInlineEnd: '23.75em', 
+								paddingBlockEnd: '0.625em', 
+								minInlineSize: 'min-content',
+								marginBottom: '1em'}}
+									><br/>
+									<div className="form-group">
+									<div className="number">
+									<div
+									id='bedroomFlat'>
+									
+									 </div>
+									
+									<span onClick = {this.minus} style={{
+									width:'26px',
+									height:'25px',
+									background:'#f2f2f2',
+									borderRadius:'4px',
+									padding:'-6px -2px -6px -2px',
+									border:'1px solid #ddd',
+									display: 'inline-block',
+									verticalAlign: 'middle',
+									textAlign: 'center'}}
+							>-</span> 
+							&nbsp;&nbsp;&nbsp;
+            
+									 <input type="text" value={this.state.bedroomHouse}  style={{
+									height: '27px',
+									width: '58px',
+									textAlign: 'center',
+									verticalAlign: 'middle'}}/> 
+									&nbsp;&nbsp;&nbsp;									
+									
+									<span onClick = {this.add} style={{width:'26px',
+									height:'25px',
+									background:'#f2f2f2',
+									borderRadius:'4px',
+									padding:'-6px -2px -6px -2px',
+									border:'1px solid #ddd',
+									display: 'inline-block',
+									verticalAlign: 'middle',
+									textAlign: 'center'}}
+									>+</span> 
+          
+										{/* <button onClick = {this.increment}> Add 1 </button> 
+									
+										<button onClick = {this.decrement}> Minus 1 </button>  */}
+						
+									
+											
+										  
+										  </div>
+										  </div>
+									
+									
+										</fieldset>
+									 
+									 
+									 
+								
 								{/*  seo part*/}
 								
 						<div className="tab-pane fade" id="custom-content-below-profile" role="tabpanel" aria-labelledby="custom-content-below-profile-tab">
@@ -1755,12 +2658,13 @@ class AddProduct extends Component {
 										
 									</div>
 								   </div>
-								   
-								   
+								  
+															   
+									
 								
 						</div>
 					  </div>
-					 
+										
 					  
 								<div className="form-group text-center">                                    
 								  <div className="input-group">
