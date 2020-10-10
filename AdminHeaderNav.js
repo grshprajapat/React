@@ -24,6 +24,8 @@ class AdminHeaderNav extends Component {
       error: false,
 	  
 	  showManagerList: false,
+	  showProductMList: false,
+	 
 	  // showMenuList: false,
 	  showSettingList: false,
 	  
@@ -111,7 +113,17 @@ class AdminHeaderNav extends Component {
 		showManagerList: !isVisible
 		});
 	}
-  
+	toggleProductMHandler = () => {
+	const isVisible = this.state.showProductMList;
+	this.setState({
+		
+		
+		
+		
+		showProductMList: !isVisible
+		});
+	}
+	
   toggleSettingHandler = () => {
 	const isVisible = this.state.showSettingList;
 	this.setState({
@@ -218,6 +230,18 @@ class AdminHeaderNav extends Component {
 	  {
 			this.setState({
 					showManagerList: true
+				});
+	  }
+	   if(gid == 'brands' || gid == 'products' || gid == 'categories'|| gid == 'blogs'|| gid == 'addbrand')
+	  {
+			this.setState({
+					showProductMList: true
+				});
+	  }
+	  if(gid == 'addbrand' )
+	  {
+			this.setState({
+					showProductList: true
 				});
 	  }
 	  
@@ -327,13 +351,46 @@ class AdminHeaderNav extends Component {
 					<i className="fa fa-users mr-2" />Social
 				  </Link>
 				  <div className="dropdown-divider" />
+				  <Link to={window.appUrl+'admin/menus'} className="dropdown-item">
+					<i className=" fa fa-indent mr-2" />menu
+				  </Link>
+				  <div className="dropdown-divider" />
+				  <Link to={window.appUrl+'admin/slider'} className="dropdown-item">
+					<i className=" fa fa-sliders mr-2 " />Slider
+				  </Link>
+				  
+				  <div className="dropdown-divider" />
+				  <Link to={window.appUrl+'admin/update-profile'} className="dropdown-item">
+					<i className=" fa fa-user-circle-o mr-2" />Update-Profile
+				  </Link>
+				  <div className="dropdown-divider" />
+				  <Link to={window.appUrl+'admin/email-templates'} className="dropdown-item">
+					<i className=" fa fa-file-text-o mr-2" />Email-Templates
+				  </Link>
+				  <div className="dropdown-divider" />
+				  <Link to={window.appUrl+'admin/faqs'} className="dropdown-item">
+					<i className=" fa fa-question-circle mr-2" />Faqs
+				  </Link>
+				  
+				  <div className="dropdown-divider" />
 				  <a href="#" className="dropdown-item">
 					<i className="fa fa-file mr-2" /> 3 new reports
 				  </a>
 				  <div className="dropdown-divider" />
+				  <a href='#' className="dropdown-item" onClick={this.handleLogout}>
+				   <i className=" fa fa-sign-out mr-2 " />LogOut
+				 </a>
+				  
+				  <div className="dropdown-divider" />
 				  <a href="#" className="dropdown-item dropdown-footer">See All Notifications</a>
+				  
+				  
 				</div>
 			</li>
+		
+				
+				  
+			
 			
 			
 			<li className="nav-item">
@@ -342,7 +399,6 @@ class AdminHeaderNav extends Component {
 			  </a>
 			</li>
 		   </ul>
-	  
         </nav>
         {/* /.navbar */}
         {/* Main Sidebar Container */}
@@ -384,35 +440,62 @@ class AdminHeaderNav extends Component {
                 </li>
 				}
 				
+				{/* Products manager  */}
+				<li className="nav-item has-treeview">
+                  <a href='#' className="nav-link "  onClick={this.toggleProductMHandler}>
+                    <i className="nav-icon fa fa-users" />
+                    <p className="text-white"> 
+					  Product Manager
+					  <i className={"admin-nav-effect right fa " + (this.state.showProductMList ? 'fa-angle-down' : 'fa-angle-left')}></i>
+					</p>
+                  </a>
+                </li>
+				
+				{this.state.showProductMList && (
+				
+				 <ul className='admin-nav-effect'>
 				<li className="nav-item">
                   <Link to={window.appUrl+"admin/brands"} className={"nav-link " + (gid == 'brands' ? 'active' : '')}>
-                    <i className="nav-icon fa fa-bandcamp" />
+                  <Link to={window.appUrl+"admin/addbrands"} className={"nav-link " + (gid == 'addbrands' ? 'active' : '')}>
+                  
+                  
+				  
+                    <i className="nav-icon fa fa-bandcamp text-white  mr-2" />
                     <p className="text-white">
                       Brands
                     </p>
                   </Link>
+                  </Link>
+                 
+                 
                 </li>
 				
-                <li className="nav-item">
+                <li className="nav-item" >
                   <Link to={window.appUrl+"admin/products"} className={"nav-link " + (gid == 'products' ? 'active' : '')}>
-                    <i className="nav-icon fa fa-th-list" />
+                    <i className="nav-icon fa fa-th-list text-white  mr-2" />
                     <p className="text-white">
                     Products
                     </p>
                   </Link>
                 </li>
 				
-				
-				 <li className="nav-item">
-                  <Link to={window.appUrl+"admin/categories"} className={"nav-link " + (gid == 'categories' ? 'active' : '')}>
-                    <i className="nav-icon fa fa-database" />
-                    <p className="text-white">
-                      Categories Manager
-                    </p>
+				<li className="nav-item">
+                  <Link to={window.appUrl+"admin/blogs"} className={"nav-link " + (gid == 'blogs' ? 'active' : '')}>
+                    <i className="nav-icon fa fa-newspaper-o text-white  mr-2 " />
+                    <p className="text-white"> Blogs </p>
                   </Link>
                 </li>
 				
-			
+				 <li className="nav-item">
+                  <Link to={window.appUrl+"admin/categories"} className={"nav-link " + (gid == 'categories' ? 'active' : '')}>
+                    <i className="nav-icon fa fa-database text-white mr-2  " />
+                    <p className="text-white">
+                      Categorie
+                    </p>
+                  </Link>
+                </li>
+				 </ul> 
+			)}
 				
 				
 				
@@ -458,12 +541,7 @@ class AdminHeaderNav extends Component {
                   </Link>
                 </li>
 				
-				<li className="nav-item">
-                  <Link to={window.appUrl+"admin/blogs"} className={"nav-link " + (gid == 'blogs' ? 'active' : '')}>
-                    <i className="nav-icon fa fa-newspaper-o" />
-                    <p className="text-white"> Blogs </p>
-                  </Link>
-                </li>
+				
 				
 				<li className="nav-item">
                   <Link to={window.appUrl+"admin/media"} className={"nav-link " + (gid == 'media' ? 'active' : '')}>
@@ -500,73 +578,7 @@ class AdminHeaderNav extends Component {
 					</ul>
 				)}*/}
 				
-				<li className="nav-item">
-                  <a href='#' className="nav-link" onClick={this.toggleSettingHandler}>
-                    <i className="nav-icon fa fa-cogs" />
-                    <p className="text-white"> 
-					  Settings 
-					  <i className={"admin-nav-effect right fa " + (this.state.showSettingList ? 'fa-angle-down' : 'fa-angle-left')}></i>
-					</p>
-                  </a>
-                </li>
-				
-				{this.state.showSettingList && (
-				    <ul className='admin-nav-effect'>
-					<li className="nav-item">
-					  <Link to={window.appUrl+"admin/general-settings"} className={"nav-link " + (gid == 'general-settings' ? 'active' : '')}>
-						<i className={"nav-icon fa fa-cog text-white " + (gid == 'general-settings' ? 'fa-spin' : '')} />&nbsp;
-						<p className="text-white"> General </p>
-					  </Link>
-					</li>
-					<li className="nav-item">
-					  <Link to={window.appUrl+"admin/social-settings"} className={"nav-link " + (gid == 'social-settings' ? 'active' : '')}>
-						<i className={"nav-icon fa fa-cog text-white " + (gid == 'social-settings' ? 'fa-spin' : '')} />&nbsp;
-						<p className="text-white">Social Links</p>
-					  </Link>
-					</li>
-					<li className="nav-item">
-					  <Link to={window.appUrl+"admin/menus"} className={"nav-link " + (gid == 'menus' ? 'active' : '')}>
-						<i className="nav-icon fa fa-indent text-white" />&nbsp;
-						<p className="text-white">Menu</p>
-					  </Link>
-					</li>
-					<li className="nav-item">
-					  <Link to={window.appUrl+"admin/slider"} className={"nav-link " + (gid == 'slider' ? 'active' : '')}>
-						<i className="nav-icon fa fa-sliders text-white" />&nbsp;
-						<p className="text-white">Slider</p>
-					  </Link>
-					</li>
-					<li className="nav-item">
-					  <Link to={window.appUrl+"admin/update-profile"} className={"nav-link " + (gid == 'update-profile' ? 'active' : '')}>
-						<i className="nav-icon fa fa-user-circle-o text-white" />&nbsp;
-						<p className="text-white">Update Profile</p>
-					  </Link>
-					</li>
-				
-					<li className="nav-item">
-					  <Link to={window.appUrl+"admin/email-templates"} className={"nav-link " + (gid == 'email-templates' ? 'active' : '')}>
-						<i className="nav-icon fa fa-file-text-o text-white" />&nbsp;
-						<p className="text-white">Email Templates</p>
-					  </Link>
-					</li>
-					<li className="nav-item">
-					  <Link to={window.appUrl+"admin/faqs"} className={"nav-link " + (gid == 'faqs' ? 'active' : '')}>
-						<i className="nav-icon fa fa-question-circle text-white" />&nbsp;
-						<p className="text-white">Faqs</p>
-					  </Link>
-					</li>
-					</ul>
-				)}
-				
-				
-				<li className="nav-item">
-				<a href='#' className="nav-link" onClick={this.handleLogout}>
-                    <i className="nav-icon fa fa-sign-out" />
-                    <p className="text-white">
-                      Logout
-                    </p>
-                </a>
-                </li>
+			
                </ul>
             </nav>
             {/* /.sidebar-menu */}
